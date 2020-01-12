@@ -1,0 +1,4 @@
+config.ini
+Gemfile.lock
+tariff_data.json
+vendor/*

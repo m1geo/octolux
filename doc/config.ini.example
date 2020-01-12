@@ -1,0 +1,10 @@
+[lxp]
+host = 192.168.0.200
+port = 4346
+serial = 9393013580
+datalog = EF76460231
+
+[octopus]
+product_code = AGILE-18-02-21
+tariff_code = E-1R-AGILE-18-02-21-E
+api_key = an_api_key_from_octopus_account_page
