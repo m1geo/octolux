@@ -32,6 +32,16 @@ class LuxController
     set_register(LXP::Packet::Registers::CHARGE_POWER_PERCENT_CMD, pct) == pct
   end
 
+  # Untested - get current discharge power %
+  def discharge_pct
+    read_register(LXP::Packet::Registers::DISCHG_POWER_PERCENT_CMD)
+  end
+
+  # Untested - set current discharge power %
+  def discharge_pct=(pct)
+    set_register(LXP::Packet::Registers::DISCHG_POWER_PERCENT_CMD, pct) == pct
+  end
+
   private
 
   # Update a given register (21 for AC CHARGE/DISCHARGE) with the given bit
