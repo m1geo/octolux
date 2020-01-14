@@ -116,21 +116,22 @@ class LuxController
     end
   end
 
+  # Read packets from our socket until we find a reply to the passed in pkt.
+  #
+  # Discards all other input, which is fine for now. We might want them in
+  # future, can deal with that later.
+  #
   def read_reply(pkt)
     loop do
-      return unless IO.select([socket], nil, nil, 2)
-
       # read 6 bytes frame header, which should be:
       # 161, 26, proto1, proto2, len1, len2
-      input1 = socket.recvfrom(6)[0]
-      return unless input1.length == 6
+      return unless (input1 = read_bytes(6))
 
-      # now read the remaining bytes as dictated by the length
+      # now read the remaining bytes as dictated by the length from the header
       header = input1.unpack('C*')
       len = header[4] + (header[5] << 8)
 
-      input2 = socket.recvfrom(len)[0]
-      return unless input2.length == len
+      return unless (input2 = read_bytes(len))
 
       input = input1 + input2
       # LOGGER.debug "PACKET IN: #{input.unpack('C*')}"
@@ -138,5 +139,31 @@ class LuxController
       r = LXP::Packet::Parser.parse(input)
       return r if r.is_a?(pkt.class) && r.register == pkt.register
     end
+  end
+
+  # Read len bytes from our socket.
+  #
+  # Returns those bytes, or nil if we timeout before reading enough bytes.
+  #
+  def read_bytes(len)
+    r = String.new
+
+    loop do
+      # Read bytes with a 5 second timeout.
+      # If no bytes are read before the timeout, return nil.
+      rlen = len - r.size
+      return unless (input = read(rlen, 5))
+
+      r << input
+
+      return r if r.size == len
+    end
+  end
+
+  # Read up to len bytes with a timeout.
+  def read(len, timeout)
+    socket.read_nonblock(len)
+  rescue IO::WaitReadable
+    retry if IO.select([socket], nil, nil, timeout)
   end
 end
