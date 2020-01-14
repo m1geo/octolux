@@ -25,8 +25,8 @@ octopus.update if octopus.stale?
 
 lux = LuxController.new(host: config['lxp']['host'],
                         port: config['lxp']['port'],
-                        serial: config['lxp']['serial'].to_s,
-                        datalog: config['lxp']['datalog'].to_s)
+                        serial: config['lxp']['serial'],
+                        datalog: config['lxp']['datalog'])
 
 begin
   # if the current price is 5p or lower, enable AC charge

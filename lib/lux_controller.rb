@@ -8,8 +8,9 @@ class LuxController
   def initialize(host:, port:, serial:, datalog:)
     @host = host
     @port = port
-    @serial = serial
-    @datalog = datalog
+    # these can be numeric, but we want them as strings to put into data packets
+    @serial = serial.to_s
+    @datalog = datalog.to_s
   end
 
   def charge(enable)
