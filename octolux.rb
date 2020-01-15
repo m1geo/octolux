@@ -28,6 +28,10 @@ lux = LuxController.new(host: config['lxp']['host'],
                         serial: config['lxp']['serial'],
                         datalog: config['lxp']['datalog'])
 
+# LOGGER.info "Charge Power % = #{lux.charge_pct}"
+
+LOGGER.info "Current Octopus Unit Price: #{octopus.price}p"
+
 begin
   # if the current price is 5p or lower, enable AC charge
   if octopus.price <= 5
