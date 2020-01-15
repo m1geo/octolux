@@ -109,7 +109,7 @@ In this case, you should run it again and hopefully this time it works. In futur
 
 ### Retry logic if inverter fails to answer
 
-Not sure if this is really the inverter failing to answer or my network reading logic could be better. Just need to debug it.
+Self-explanatory. If the inverter doesn't answer, we should probably close the socket and try again.
 
 ### Knowledge of state-of-charge so we can write rules based on it
 
