@@ -152,7 +152,7 @@ class LuxController
     return unless (input2 = read_bytes(len))
 
     input = input1 + input2
-    LOGGER.debug "PACKET IN: #{input.unpack('C*')}"
+    # LOGGER.debug "PACKET IN: #{input.unpack('C*')}"
 
     LXP::Packet::Parser.parse(input)
   end
