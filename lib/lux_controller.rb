@@ -139,7 +139,7 @@ class LuxController
 
     # verify the header in input1 looks reasonable
     header = input1.unpack('C*')
-    return unless header[0, 1] == [161, 26]
+    return unless header[0..1] == [161, 26]
 
     # work out how long the rest of the packet should be
     len = header[4] + (header[5] << 8)
