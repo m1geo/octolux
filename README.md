@@ -32,6 +32,23 @@ Create a `config.ini` using the `doc/config.ini.example` as a template. This scr
 * which Octopus tariff you're on, AGILE-18-02-21 is my current one for Octopus Agile.
 * an API key to get tariff data from Octopus with. This can be generated in your Octopus Account page.
 
+### Inverter Setup
+
+By default, the datalogger plugged into the Lux sends statistics about your inverter to LuxPower in China. This is how their web portal and phone app knows all about you.
+
+We need to configure it to open another port that we can talk to. Open a web browser to your datalogger IP (might have to check your DHCP server to find it) and login with username/password admin/admin. Click English in the top right :)
+
+You should see:
+
+![](doc/lux_run_state.png)
+
+Tap on Network Setting in the menu. You should see two forms, the top one is populated with LuxPower's IP in China - the second one we can use. Configure it to look like the below and save:
+
+![](doc/lux_network_setting.png)
+
+After the datalogger reboots (this takes only a couple of seconds and does not affect the main inverter operation, it will continue as normal), port 4346 on your inverter IP is accessible to our Ruby script. You should be sure that this port is only accessible via your LAN, and not exposed to the Internet, or anyone can control your inverter.
+
+
 ## Usage
 
 The design is that this script is intended to be run every half an hour, just after the tariff price has changed. Running it in cron on the hour and half-hour should be fine.
