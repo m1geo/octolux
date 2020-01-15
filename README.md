@@ -104,3 +104,15 @@ F, [2020-01-15T10:57:21.366535 #81932] FATAL -- : invalid/no reply from inverter
 ```
 
 In this case, you should run it again and hopefully this time it works. In future I'll add some retry logic.
+
+## TODO
+
+### Retry logic if inverter fails to answer
+
+Not sure if this is really the inverter failing to answer or my network reading logic could be better. Just need to debug it.
+
+### Knowledge of state-of-charge so we can write rules based on it
+
+This is non-trivial as we can't ask the inverter for it directly. It just sends it, at 2 minute intervals. So to get this we'll probably need to convert to being a service that runs constantly, and writes SOC to a tempfile that we can query.
+
+Vague plan to make a HTTP service that talks to the inverter and runs permanently, then other one-off Ruby scripts to control it that can run from cron etc. Will just need to get the TCP comms bulletproof for this to work reliably.
