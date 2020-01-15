@@ -38,7 +38,7 @@ The design is that this script is intended to be run every half an hour, just af
 
 The first thing it does is check if you have up-to-date tariff data; if not it fetches some and stores it in `tariff_data.json`.
 
-There is currently one simple hardcoded rule in `octolux.rb` - if the current Octopus price (inc VAT) is 5p or lower, enable AC charging. If it is higher, then disable it.
+There is currently one simple hardcoded rule in `octolux.rb` - if the current Octopus price (inc VAT) is 5p or lower, enable AC charging. If it is higher, then disable it. If the inverter was already in the correct state then no action is taken. Therefore this is safe to run as often as you like.
 
 This is still rather a proof of concept, so use with care. It will output some logging information to tell you what it is doing.
 
