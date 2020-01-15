@@ -1,8 +1,6 @@
 # LuxPower Inverter / Octopus Time-of-use Tariff Integration
 
-Hugely WIP, this is not finished or useful yet.
-
-This will be a Ruby script to parse Octopus tariff prices and control a LuxPower ACS inverter according to rules you specify.
+This is a Ruby script to parse Octopus tariff prices and control a LuxPower ACS inverter according to rules you specify.
 
 The particular use-case of this is to charge your home batteries when prices are cheap, and use that power at peak times.
 
@@ -36,8 +34,56 @@ Create a `config.ini` using the `doc/config.ini.example` as a template. This scr
 
 ## Usage
 
-TBD. This is not a finished script, don't just blindly run it.
-
 The design is that this script is intended to be run every half an hour, just after the tariff price has changed. Running it in cron on the hour and half-hour should be fine.
 
 The first thing it does is check if you have up-to-date tariff data; if not it fetches some and stores it in `tariff_data.json`.
+
+There is currently one simple hardcoded rule in `octolux.rb` - if the current Octopus price (inc VAT) is 5p or lower, enable AC charging. If it is higher, then disable it.
+
+This is still rather a proof of concept, so use with care. It will output some logging information to tell you what it is doing.
+
+An example of the price being below 5p, so it enables AC charging:
+
+```
+~/src/octolux> ./octolux.rb
+I, [2020-01-15T10:53:01.221311 #81551]  INFO -- : Current Octopus Unit Price: 4.0125p
+D, [2020-01-15T10:53:01.221783 #81551] DEBUG -- : charge(true)
+D, [2020-01-15T10:53:01.221813 #81551] DEBUG -- : update_register(21, 128, true)
+D, [2020-01-15T10:53:01.221823 #81551] DEBUG -- : read_register(21)
+D, [2020-01-15T10:53:02.059861 #81551] DEBUG -- : read_register 21 result = 62292
+D, [2020-01-15T10:53:02.059941 #81551] DEBUG -- : set_register(21 62420)
+```
+
+An example of the price being above 5p, so it disables AC charging:
+
+```
+I, [2020-01-15T10:53:25.204004 #81782]  INFO -- : Current Octopus Unit Price: 8.2215p
+D, [2020-01-15T10:53:25.204536 #81782] DEBUG -- : charge(false)
+D, [2020-01-15T10:53:25.204557 #81782] DEBUG -- : update_register(21, 128, false)
+D, [2020-01-15T10:53:25.204567 #81782] DEBUG -- : read_register(21)
+D, [2020-01-15T10:53:26.135141 #81782] DEBUG -- : read_register 21 result = 62420
+D, [2020-01-15T10:53:26.135204 #81782] DEBUG -- : set_register(21 62292)
+```
+
+If the inverter is already in the correct state, you'll see something like:
+
+```
+I, [2020-01-15T10:57:23.718003 #81969]  INFO -- : Current Octopus Unit Price: 8.2215p
+D, [2020-01-15T10:57:23.718634 #81969] DEBUG -- : charge(false)
+D, [2020-01-15T10:57:23.718658 #81969] DEBUG -- : update_register(21, 128, false)
+D, [2020-01-15T10:57:23.718670 #81969] DEBUG -- : read_register(21)
+D, [2020-01-15T10:57:24.829219 #81969] DEBUG -- : read_register 21 result = 62292
+D, [2020-01-15T10:57:24.829271 #81969] DEBUG -- : register already has correct value, nothing to do
+```
+
+Occasionally the inverter fails to reply, this isn't really handled yet, but it does tell you about it:
+
+```
+I, [2020-01-15T10:57:11.762791 #81932]  INFO -- : Current Octopus Unit Price: 8.2215p
+D, [2020-01-15T10:57:11.763346 #81932] DEBUG -- : charge(false)
+D, [2020-01-15T10:57:11.763365 #81932] DEBUG -- : update_register(21, 128, false)
+D, [2020-01-15T10:57:11.763377 #81932] DEBUG -- : read_register(21)
+F, [2020-01-15T10:57:21.366535 #81932] FATAL -- : invalid/no reply from inverter
+```
+
+In this case, you should run it again and hopefully this time it works. In future I'll add some retry logic.
