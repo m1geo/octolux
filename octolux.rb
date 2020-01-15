@@ -5,7 +5,6 @@ require 'bundler/setup'
 require 'logger'
 
 require 'inifile'
-require 'lxp/packet'
 require 'zeitwerk'
 
 LOGGER = Logger.new(STDOUT)
