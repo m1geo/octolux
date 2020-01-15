@@ -1,0 +1,17 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    inifile (3.0.0)
+    lxp-packet (0.1.2)
+    zeitwerk (2.2.2)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  inifile
+  lxp-packet
+  zeitwerk
+
+BUNDLED WITH
+   2.0.2
