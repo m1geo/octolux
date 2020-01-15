@@ -6,3 +6,5 @@ gem 'zeitwerk'
 
 gem 'inifile'
 gem 'lxp-packet'
+
+gem 'roda'

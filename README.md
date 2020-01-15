@@ -113,6 +113,6 @@ Self-explanatory. If the inverter doesn't answer, we should probably close the s
 
 ### Knowledge of state-of-charge so we can write rules based on it
 
-This is non-trivial as we can't ask the inverter for it directly. It just sends it, at 2 minute intervals. So to get this we'll probably need to convert to being a service that runs constantly, and writes SOC to a tempfile that we can query.
-
 Vague plan to make a HTTP service that talks to the inverter and runs permanently, then other one-off Ruby scripts to control it that can run from cron etc. Will just need to get the TCP comms bulletproof for this to work reliably.
+
+This is WIP in server.rb. It connects to the inverter, listens for packets, and makes them available over a simple webserver. Not used in octolux.rb yet.

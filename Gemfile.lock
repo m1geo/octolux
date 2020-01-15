@@ -3,6 +3,9 @@ GEM
   specs:
     inifile (3.0.0)
     lxp-packet (0.1.2)
+    rack (2.1.1)
+    roda (3.28.0)
+      rack
     zeitwerk (2.2.2)
 
 PLATFORMS
@@ -11,6 +14,7 @@ PLATFORMS
 DEPENDENCIES
   inifile
   lxp-packet
+  roda
   zeitwerk
 
 BUNDLED WITH
