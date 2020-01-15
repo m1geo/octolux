@@ -16,12 +16,12 @@ Clone this repository to your machine:
 
 ```
 git clone https://github.com/celsworth/octolux.git
-```
-
-Install dependencies with bundler. Using `.bundle/config`, this will install gems to `./vendor/bundle`, and so does not need root.
-
-```
 cd octolux
+```
+
+Install dependencies with bundler. Using `.bundle/config`, this will install gems to `./vendor/bundle`, and so does not need root. You may occasionally need to re-run this as I update the repository and bring in new dependencies or update existing ones.
+
+```
 bundle install
 ```
 
