@@ -125,7 +125,7 @@ class LuxController
   def read_reply(pkt)
     loop do
       # Return nil if read_packet returns :err (short read or timeout)
-      return if (r = read_packet) == :err
+      return unless (r = read_packet)
 
       # Return the packet if it matches the register we're looking for
       return r if r.is_a?(pkt.class) && r.register == pkt.register
@@ -134,28 +134,26 @@ class LuxController
 
   # Read a packet from the socket.
   #
-  # This will return an LXP::Packet or nil (heartbeat, LXP::Packet limitation)
-  # or :err if we fail to read a full packet.
+  # This will return an LXP::Packet or nil.
   #
   def read_packet
     # read 6 bytes frame header, which should be:
     # 161, 26, proto1, proto2, len1, len2
-    return :err unless (input1 = read_bytes(6))
+    return unless (input1 = read_bytes(6))
 
     # verify the header in input1 looks reasonable
     header = input1.unpack('C*')
-    return :err unless header[0..1] == [161, 26]
+    return unless header[0..1] == [161, 26]
 
     # work out how long the rest of the packet should be
     len = header[4] + (header[5] << 8)
 
     # read the remaining bytes as dictated by the length from the header
-    return :err unless (input2 = read_bytes(len))
+    return unless (input2 = read_bytes(len))
 
     input = input1 + input2
-    # LOGGER.debug "PACKET IN: #{input.unpack('C*')}"
+    LOGGER.debug "PACKET IN: #{input.unpack('C*')}"
 
-    # can return nil for heartbeat packets which LXP::Packet currently ignores
     LXP::Packet::Parser.parse(input)
   end
 
