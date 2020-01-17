@@ -38,6 +38,6 @@ begin
   else
     lux.charge(false)
   end
-rescue LuxController::SocketError
+rescue StandardError
   nil
 end
