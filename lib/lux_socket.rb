@@ -3,9 +3,6 @@
 require 'socket'
 
 class LuxSocket
-  SOL_TCP = 6
-  TCP_KEEPIDLE = 4
-
   def initialize(host:, port:)
     @host = host
     @port = port
@@ -49,7 +46,7 @@ class LuxSocket
   def read_reply(pkt)
     loop do
       # Return nil if read_packet returns :err (short read or timeout)
-      return unless (r = socket.read_packet)
+      return unless (r = read_packet)
 
       # Return the packet if it matches the register we're looking for
       return r if r.is_a?(pkt.class) && r.register == pkt.register
@@ -61,9 +58,6 @@ class LuxSocket
   def socket
     @socket ||= Socket.tcp(@host, @port, connect_timeout: 5).tap do |s|
       s.setsockopt(Socket::SOL_SOCKET, Socket::SO_KEEPALIVE, true)
-      s.setsockopt(SOL_TCP, TCP_KEEPIDLE, 50)
-      s.setsockopt(SOL_TCP, Socket::TCP_KEEPINTVL, 10)
-      s.setsockopt(SOL_TCP, Socket::TCP_KEEPCNT, 5)
     end
   end
 
