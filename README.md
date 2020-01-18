@@ -6,7 +6,7 @@ The particular use-case of this is to charge your home batteries when prices are
 
 ## Installation
 
-You'll need Ruby - at least 2.1 should be fine, which can be found in all good Linux distributions. Git is installed here too so you can clone the repository.
+You'll need Ruby - at least 2.3 should be fine, which can be found in all good Linux distributions. Git is installed here too so you can clone the repository.
 
 ```
 sudo apt-get install ruby ruby-bundler git
