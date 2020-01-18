@@ -51,7 +51,20 @@ After the datalogger reboots (this takes only a couple of seconds and does not a
 
 ## Usage
 
-The design is that this script is intended to be run every half an hour, just after the tariff price has changed. Running it in cron on the hour and half-hour should be fine.
+There are two components.
+
+  * `server.rb` starts a HTTP server and is a long-running process that monitors the inverter for status packets (these include things like battery state-of-charge). We can then use this SOC in `octolux.rb`.
+  * `octolux.rb` is run either manually or from cron, and enables or disables AC charge depending on the rules written in it.
+
+It's split like this because there's no way to ask the inverter for the current battery SOC. You just have to wait (up to two minutes) for it to tell you. The server will return the latest SOC on-demand via HTTP.
+
+### server.rb
+
+TBD. This works but isn't used as part of `octolux.rb` yet. You can start it then send a GET request to it to get a JSON hash of inverter data back (once it populates, wait 2 minutes).
+
+### octolux.rb
+
+The design is that this script is intended to be run every half an hour, just after the tariff price has changed. Running it in cron on the hour and half-hour should be fine, or even more frequently.
 
 The first thing it does is check if you have up-to-date tariff data; if not it fetches some and stores it in `tariff_data.json`.
 
@@ -104,6 +117,23 @@ F, [2020-01-15T10:57:21.366535 #81932] FATAL -- : invalid/no reply from inverter
 ```
 
 In this case, you should run it again and hopefully this time it works. In future I'll add some retry logic.
+
+## Notes
+
+`octolux.rb` creates a `LuxController` object to do the heavy lifting. This object can do a few things:
+
+  * `lux.charge(true)` - enable AC charging
+  * `lux.charge(false)` - disable AC charging
+  * `lux.discharge(true)` - enable forced discharge
+  * `lux.discharge(false)` - disable forced discharge
+  * `lux.charge_pct` - get AC charge power rate, 0-100%
+  * `lux.charge_pct = 50` - set AC charge power rate to 50%
+  * `lux.discharge_pct` - get discharge power rate, 0-100%
+  * `lux.discharge_pct = 50` - set discharge power rate to 50%
+
+Forced discharge may be useful if you're paid for export and you have a surplus of stored power when the export rate is high.
+
+Setting the power rates is probably a bit of a niche requirement. Note that discharge rate is *all* discharging, not just forced discharge. This can be used to cap the power being produced by the inverter. Setting it to 0 will disable discharging, even if not charging.
 
 ## TODO
 
