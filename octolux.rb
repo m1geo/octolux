@@ -13,7 +13,7 @@ loader = Zeitwerk::Loader.new
 loader.push_dir('lib')
 loader.setup
 
-config = IniFile.load('config.ini')
+config = IniFile.load('config.ini') || raise('config.ini not found!')
 
 octopus = Octopus.new(key: config['octopus']['api_key'],
                       product_code: config['octopus']['product_code'],
