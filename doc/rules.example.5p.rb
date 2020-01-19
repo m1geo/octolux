@@ -3,7 +3,7 @@
 # $octopus contains tariff price data
 #   $octopus.price is current cost in pence
 #   $octopus.prices is a hash of all known price data, keyed by time
-LOGGER.info "Current $octopus Unit Price: #{$octopus.price}p"
+LOGGER.info "Current Octopus Unit Price: #{$octopus.price}p"
 
 # $lc is LuxController. This talks directly to the inverter and can do things
 # like enabling/disabling AC charge and setting charge power rates.

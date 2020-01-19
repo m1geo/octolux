@@ -41,7 +41,7 @@ This script needs to know:
 Copy `rules.rb` from the example as a starting point:
 
 ```
-cp doc/rules.rb.example.5p rules.rb
+cp doc/rules.example.5p.rb rules.rb
 ```
 
 This default one simply enables AC charging when the tariff price is 5p or lower, and disables it otherwise. Perhaps more exotic examples to follow.
