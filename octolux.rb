@@ -33,11 +33,13 @@ LOGGER.info "Current Octopus Unit Price: #{octopus.price}p"
 
 begin
   # if the current price is 5p or lower, enable AC charge
-  if octopus.price <= 5
-    lux.charge(true)
-  else
-    lux.charge(false)
+  charge = octopus.price <= 5
+
+  unless lux.charge(charge)
+    LOGGER.error 'Failed to update inverter status!'
+    exit 255
   end
-rescue StandardError
-  nil
+rescue StandardError => e
+  LOGGER.error "Error: #{e}"
+  exit 255
 end
