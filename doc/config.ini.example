@@ -8,3 +8,8 @@ datalog = EF76460231
 product_code = AGILE-18-02-21
 tariff_code = E-1R-AGILE-18-02-21-E
 api_key = an_api_key_from_octopus_account_page
+
+# where the optional server.rb is running, if available
+[server]
+host = localhost
+port = 4346

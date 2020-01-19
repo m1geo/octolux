@@ -1,3 +1,4 @@
+rules.rb
 config.ini
 tariff_data.json
 vendor/*

@@ -32,6 +32,16 @@ Create a `config.ini` using the `doc/config.ini.example` as a template. This scr
 * which Octopus tariff you're on, AGILE-18-02-21 is my current one for Octopus Agile.
 * an API key to get tariff data from Octopus with. This can be generated in your Octopus Account page.
 
+Copy `rules.rb` from the example as a starting point:
+
+```
+cp doc/rules.rb.example.5p rules.rb
+```
+
+This default one simply enables AC charging when the tariff price is 5p or lower, and disables it otherwise. Perhaps more exotic examples to follow.
+
+The idea behind keeping the rules separate is you can edit it and be unaffected by any changes to the main script in the git repository (hopefully).
+
 ### Inverter Setup
 
 By default, the datalogger plugged into the Lux sends statistics about your inverter to LuxPower in China. This is how their web portal and phone app knows all about you.
