@@ -25,7 +25,13 @@ Install dependencies with bundler. Using `.bundle/config`, this will install gem
 bundle install
 ```
 
-Create a `config.ini` using the `doc/config.ini.example` as a template. This script needs to know:
+Create a `config.ini` using the `doc/config.ini.example` as a template:
+
+```
+cp doc/config.ini.example config.ini
+```
+
+This script needs to know:
 
 * where to find your Lux inverter, host and port.
 * the serial numbers of your inverter and datalogger (the plug-in WiFi unit), which are normally printed on the sides.
