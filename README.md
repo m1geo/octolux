@@ -1,6 +1,6 @@
 # LuxPower Inverter / Octopus Time-of-use Tariff Integration
 
-This is a Ruby script to parse Octopus tariff prices and control a LuxPower ACS inverter according to rules you specify.
+This is a Ruby script to parse [Octopus ToU tariff](https://octopus.energy/agile/) prices and control a [LuxPower ACS inverter](https://www.luxpowertek.com/ac-ess.html) according to rules you specify.
 
 The particular use-case of this is to charge your home batteries when prices are cheap, and use that power at peak times.
 
