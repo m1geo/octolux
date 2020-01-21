@@ -24,13 +24,14 @@ class Octopus
 
   # Update local data with the most recent API data
   def update
-    response = http.request(request).body
+    response = http.request(request)
 
     if response.is_a?(Net::HTTPOK)
+      body = response.body
       # test that we have sane looking JSON before we save it
-      @tariff_data = JSON.parse(response)
+      @tariff_data = JSON.parse(body)
 
-      tariff_data_file.write(response)
+      tariff_data_file.write(body)
     else
       LOGGER.fatal "Error updating Octopus: #{response}"
     end
