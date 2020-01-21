@@ -15,9 +15,9 @@ loader.setup
 
 config = IniFile.load('config.ini') || raise('$config.ini not found!')
 
-$octopus = Octopus.new(key: config['$octopus']['api_key'],
-                       product_code: config['$octopus']['product_code'],
-                       tariff_code: config['$octopus']['tariff_code'])
+$octopus = Octopus.new(key: config['octopus']['api_key'],
+                       product_code: config['octopus']['product_code'],
+                       tariff_code: config['octopus']['tariff_code'])
 # if we have less than 6 hours of future $octopus tariff data, update it
 $octopus.update if $octopus.stale?
 unless $octopus.price
