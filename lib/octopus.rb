@@ -26,10 +26,14 @@ class Octopus
   def update
     response = http.request(request).body
 
-    # test that we have sane looking JSON before we save it
-    @tariff_data = JSON.parse(response)
+    if response.is_a?(Net::HTTPOK)
+      # test that we have sane looking JSON before we save it
+      @tariff_data = JSON.parse(response)
 
-    tariff_data_file.write(response)
+      tariff_data_file.write(response)
+    else
+      LOGGER.fatal "Error updating Octopus: #{response}"
+    end
   end
 
   # Munge tariff data into a hash of ascending time (from) -> price (inc vat)

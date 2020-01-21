@@ -20,6 +20,10 @@ $octopus = Octopus.new(key: config['$octopus']['api_key'],
                        tariff_code: config['$octopus']['tariff_code'])
 # if we have less than 6 hours of future $octopus tariff data, update it
 $octopus.update if $octopus.stale?
+unless $octopus.price
+  LOGGER.fatal 'No current Octopus price, aborting'
+  exit 255
+end
 
 $lc = LuxController.new(host: config['lxp']['host'],
                         port: config['lxp']['port'],
