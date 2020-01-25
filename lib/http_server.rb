@@ -6,11 +6,10 @@ class HttpServer < Roda
   plugin :json
 
   route do |r|
-    # get SOC?
-    # enable/disable AC charge?
-
-    r.get do
-      DATA
+    r.on 'api' do
+      r.get 'inputs' do
+        LuxListener.inputs
+      end
     end
   end
 end
