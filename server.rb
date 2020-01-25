@@ -21,4 +21,4 @@ CONFIG = IniFile.load('config.ini')
 # start a background thread which will listen for inverter packets
 Thread.new { LuxListener.run }
 
-Rack::Server.start(Host: 'localhost', Port: 4346, app: HttpServer.freeze.app)
+Rack::Server.start(Host: 'localhost', Port: 4346, app: App.freeze.app)

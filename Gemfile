@@ -8,4 +8,8 @@ gem 'zeitwerk'
 gem 'inifile'
 gem 'lxp-packet'
 
-gem 'roda'
+group :webserver do
+  gem 'roda'
+  gem 'slim'
+  gem 'tilt'
+end

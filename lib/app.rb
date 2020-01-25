@@ -2,10 +2,16 @@
 
 require 'roda'
 
-class HttpServer < Roda
+class App < Roda
   plugin :json
 
+  plugin :padrino_render, engine: 'slim', views: 'www/templates', layout: 'layouts/application'
+
   route do |r|
+    r.get '' do
+      render 'index'
+    end
+
     r.on 'api' do
       r.get 'inputs' do
         LuxListener.inputs
