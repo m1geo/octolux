@@ -162,3 +162,9 @@ Self-explanatory. If the inverter doesn't answer, we should probably close the s
 Vague plan to make a HTTP service that talks to the inverter and runs permanently, then other one-off Ruby scripts to control it that can run from cron etc. Will just need to get the TCP comms bulletproof for this to work reliably.
 
 This is WIP in server.rb. It connects to the inverter, listens for packets, and makes them available over a simple webserver. Not used in octolux.rb yet.
+
+### Run in a daemon with a web interface
+
+This would move away from the idea of running `octolux.rb` in cron, to running `server.rb` constantly, which handles everything; checking Octopus prices regularly and setting inverter state.
+
+Could also run a simple web interface to show the current state and set overrides, schedules and so on.
