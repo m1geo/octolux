@@ -93,6 +93,8 @@ class LuxController
       raise SocketError
     end
 
+    LOGGER.debug "set_register reply = #{r.value}"
+
     r.value
   end
 
