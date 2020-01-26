@@ -7,7 +7,7 @@ class App < Roda
 
   plugin :json
 
-  plugin :padrino_render, engine: 'slim', views: 'www/templates', layout: 'layouts/application'
+  plugin :padrino_render, engine: 'slim', views: 'www/templates', layout: 'layouts/application', cache: false
 
   route do |r|
     r.get '' do

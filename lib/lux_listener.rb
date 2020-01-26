@@ -26,12 +26,22 @@ class LuxListener
       @registers ||= {}
     end
 
+    def pv_power
+      inputs['p_pv']
+    end
+
+    # Return charge power, or if discharging, discharge power (which will be negative)
+    def charge_power
+      inputs['p_charge'] || (-inputs['p_discharge'] if inputs['p_discharge'])
+    end
+
     private
 
     def listen(socket)
       loop do
         next unless (pkt = socket.read_packet)
 
+        @last_packet = Time.now
         inputs.merge!(pkt.to_h) if pkt.is_a?(LXP::Packet::ReadInput)
         registers[pkt.register] = pkt.value if pkt.is_a?(LXP::Packet::ReadHold)
       end

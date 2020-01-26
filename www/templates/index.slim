@@ -1,23 +1,72 @@
-h1.title Octolux Test
+section.hero.is-danger.is-bold
+  .hero-body
+    .container
+      h1.title
+        | Nothing on this page works, it is all just testing styling
 
-pre= LuxListener.registers
-pre= LuxListener.inputs
+section.section
+  pre= LuxListener.registers
+  pre= LuxListener.inputs
 
-.level
-  .level-left
-    .level-item
-      span.icon.is-large
-        i.fas.fa-3x.fa-battery-full.has-text-success
-    .level-item 35%
+.columns.is-mobile
+  .column.is-4
+    .panel.is-primary
+      p.panel-heading AC Charge
+      .panel-block
+        | AC Charge is currently Disabled
+      .panel-block
+        button.button.is-success.is-fullwidth.is-light
+          span Enable Permanently
+      .panel-block.container
+        .columns
+          .column.is-one-third
+            button.button.is-success.is-fullwidth.is-light.is-small
+              span .. for 30 mins
+          .column.is-one-third
+            button.button.is-success.is-fullwidth.is-light.is-small
+              span .. for 1 hour
+          .column.is-one-third
+            button.button.is-success.is-fullwidth.is-light.is-small
+              span .. until rule change
 
-.level.is-mobile
-  .level-item.has-text-centered
+.columns.is-mobile.has-text-centered
+  .column
     div
       p.heading AC Charge
       p.title OFF
 
-  .level-item.has-text-centered
+  .column
     div
       p.heading Force Discharge
       p.title OFF
+
+
+.columns.is-mobile.is-multiline.has-text-centered
+  .column.is-half-mobile
+    p.title.is-marginless = "#{LuxListener.pv_power || 0}W"
+    span.icon.is-large
+      i.fas.fa-2x.fa-solar-panel.has-text-warning
+    p.has-text-warning.subtitle Solar PV
+
+  .column.is-half-mobile
+    - exporting = true
+    - kls = exporting ? 'has-text-danger' : 'has-text-info'
+    p.title.is-marginless 100W
+    span.icon.is-large
+      i.fas.fa-2x.fa-bolt class=kls
+    p.subtitle class=kls = exporting ? 'Exporting' : 'Importing'
+
+  .column.is-half-mobile
+    - charging = true
+    - kls = charging ? 'has-text-success' : 'has-text-danger'
+    p.title.is-marginless = "#{LuxListener.charge_power || 0}W"
+    span.icon.is-large
+      i.fas.fa-2x.fa-battery-three-quarters class=kls
+    p.subtitle class=kls = charging ? 'Charging' : 'Discharging'
+
+  .column.is-half-mobile
+    p.title.is-marginless 100W
+    span.icon.is-large
+      i.fas.fa-2x.fa-home.has-text-primary
+    p.has-text-primary.subtitle Consumption
 

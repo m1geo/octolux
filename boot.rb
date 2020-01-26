@@ -2,7 +2,7 @@
 
 Thread.abort_on_exception = true
 
-# change directory to where octolux.rb lives; this lets us run from anywhere.
+# change directory to our root path; this lets us be run from any directory, which makes cron easier
 Dir.chdir(__dir__)
 
 require 'bundler/setup'
