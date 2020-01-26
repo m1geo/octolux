@@ -3,6 +3,8 @@
 require 'roda'
 
 class App < Roda
+  use ZeitwerkReloader
+
   plugin :json
 
   plugin :padrino_render, engine: 'slim', views: 'www/templates', layout: 'layouts/application'

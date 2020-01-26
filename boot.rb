@@ -14,7 +14,9 @@ require 'zeitwerk'
 LOGGER = Logger.new(STDOUT)
 
 LOADER = Zeitwerk::Loader.new
+LOADER.logger = LOGGER if ENV['ZEITWERK_LOGGING']
 LOADER.push_dir('lib')
+LOADER.enable_reloading
 LOADER.setup
 
 CONFIG = IniFile.load('config.ini') || raise('config.ini not found!')
