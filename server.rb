@@ -1,20 +1,12 @@
 #! /usr/bin/env ruby
 # frozen_string_literal: true
 
-Thread.abort_on_exception = true
+require_relative 'boot'
 
-require 'bundler/setup'
-require 'logger'
+# change directory to where octolux.rb lives; this lets us run from anywhere.
+Dir.chdir(__dir__)
+
 require 'rack'
-
-require 'inifile'
-require 'zeitwerk'
-
-LOGGER = Logger.new(STDOUT)
-
-loader = Zeitwerk::Loader.new
-loader.push_dir('lib')
-loader.setup
 
 CONFIG = IniFile.load('config.ini')
 

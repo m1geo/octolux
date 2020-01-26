@@ -1,20 +1,7 @@
 #! /usr/bin/env ruby
 # frozen_string_literal: true
 
-# change directory to where octolux.rb lives; this lets us run from anywhere.
-Dir.chdir(__dir__)
-
-require 'bundler/setup'
-require 'logger'
-
-require 'inifile'
-require 'zeitwerk'
-
-LOGGER = Logger.new(STDOUT)
-
-loader = Zeitwerk::Loader.new
-loader.push_dir('lib')
-loader.setup
+require_relative 'boot'
 
 config = IniFile.load('config.ini') || raise('$config.ini not found!')
 
