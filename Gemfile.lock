@@ -2,7 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     inifile (3.0.0)
-    lxp-packet (0.1.2)
+    lxp-packet (0.2.0)
     rack (2.1.1)
     roda (3.28.0)
       rack
@@ -28,4 +28,4 @@ RUBY VERSION
    ruby 2.6.3p62
 
 BUNDLED WITH
-   2.0.2
+   2.1.4
