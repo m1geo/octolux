@@ -3,11 +3,9 @@
 
 require_relative 'boot'
 
-config = IniFile.load('config.ini') || raise('$config.ini not found!')
-
-$octopus = Octopus.new(key: config['octopus']['api_key'],
-                       product_code: config['octopus']['product_code'],
-                       tariff_code: config['octopus']['tariff_code'])
+$octopus = Octopus.new(key: CONFIG['octopus']['api_key'],
+                       product_code: CONFIG['octopus']['product_code'],
+                       tariff_code: CONFIG['octopus']['tariff_code'])
 # if we have less than 6 hours of future $octopus tariff data, update it
 $octopus.update if $octopus.stale?
 unless $octopus.price
@@ -15,12 +13,12 @@ unless $octopus.price
   exit 255
 end
 
-$lc = LuxController.new(host: config['lxp']['host'],
-                        port: config['lxp']['port'],
-                        serial: config['lxp']['serial'],
-                        datalog: config['lxp']['datalog'])
+$lc = LuxController.new(host: CONFIG['lxp']['host'],
+                        port: CONFIG['lxp']['port'],
+                        serial: CONFIG['lxp']['serial'],
+                        datalog: CONFIG['lxp']['datalog'])
 
-$ls = LuxStatus.new(host: config['server']['host'],
-                    port: config['server']['port'])
+$ls = LuxStatus.new(host: CONFIG['server']['host'],
+                    port: CONFIG['server']['port'])
 
 File.readable?('rules.rb') ? load('rules.rb') : raise('rules.rb not found!')

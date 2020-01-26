@@ -13,6 +13,8 @@ require 'zeitwerk'
 
 LOGGER = Logger.new(STDOUT)
 
-loader = Zeitwerk::Loader.new
-loader.push_dir('lib')
-loader.setup
+LOADER = Zeitwerk::Loader.new
+LOADER.push_dir('lib')
+LOADER.setup
+
+CONFIG = IniFile.load('config.ini') || raise('config.ini not found!')

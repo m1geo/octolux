@@ -8,8 +8,6 @@ Dir.chdir(__dir__)
 
 require 'rack'
 
-CONFIG = IniFile.load('config.ini')
-
 # start a background thread which will listen for inverter packets
 Thread.new { LuxListener.run }
 
