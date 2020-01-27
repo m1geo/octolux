@@ -18,6 +18,9 @@ begin
   # if the current price is 5p or lower, enable AC charge
   charge = octopus.price <= 5
 
+  # experimental GPIO support. turn a GPIO on when charge is true, off if false.
+  # gpio.set('zappi', charge)
+
   unless lc.charge(charge)
     LOGGER.error 'Failed to update inverter status!'
     exit 255

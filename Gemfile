@@ -8,6 +8,10 @@ gem 'zeitwerk'
 gem 'inifile'
 gem 'lxp-packet'
 
+group :pi do
+  gem 'rpi_gpio'
+end
+
 group :webserver do
   gem 'roda'
   gem 'slim'

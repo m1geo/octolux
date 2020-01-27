@@ -14,6 +14,7 @@ require 'zeitwerk'
 LOGGER = Logger.new(STDOUT)
 
 LOADER = Zeitwerk::Loader.new
+LOADER.inflector.inflect('gpio' => 'GPIO')
 LOADER.logger = LOGGER if ENV['ZEITWERK_LOGGING']
 LOADER.push_dir('lib')
 LOADER.enable_reloading

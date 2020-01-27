@@ -13,3 +13,10 @@ api_key = an_api_key_from_octopus_account_page
 [server]
 host = localhost
 port = 4346
+
+# an optional list of GPIOs you'd like to control on a Raspberry Pi.
+# the names are used in your rules.rb and can be anything you like.
+# the numbers are corresponding GPIO numbers.
+# See https://www.raspberrypi-spy.co.uk/wp-content/uploads/2012/06/Raspberry-Pi-GPIO-Header-with-Photo.png
+[gpios]
+zappi = 5

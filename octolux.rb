@@ -21,6 +21,8 @@ lc = LuxController.new(host: CONFIG['lxp']['host'],
 ls = LuxStatus.new(host: CONFIG['server']['host'],
                    port: CONFIG['server']['port'])
 
+gpio = GPIO.new(gpios: CONFIG['gpios']) # abstraction of RPi::GPIO
+
 raise('rules.rb not found!') unless File.readable?('rules.rb')
 
 # transitioning to local vars rather than globals to make web rules easier

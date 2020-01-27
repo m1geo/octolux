@@ -4,6 +4,8 @@ This is a Ruby script to parse [Octopus ToU tariff](https://octopus.energy/agile
 
 The particular use-case of this is to charge your home batteries when prices are cheap, and use that power at peak times.
 
+There's also support for toggling Raspberry Pi GPIO pins as an added bonus.
+
 ## Installation
 
 You'll need Ruby - at least 2.3 should be fine, which can be found in all good Linux distributions. Git is installed here too so you can clone the repository.
@@ -19,7 +21,15 @@ git clone https://github.com/celsworth/octolux.git
 cd octolux
 ```
 
-Install dependencies with bundler. Using `.bundle/config`, this will install gems to `./vendor/bundle`, and so does not need root. You may occasionally need to re-run this as I update the repository and bring in new dependencies or update existing ones.
+Install dependencies with bundler. This will install gems to `./vendor/bundle`, and so should not need root.
+
+Firstly, if you are running on a Raspberry Pi and want to use the GPIO support, you need to enable installing it with:
+
+```
+bundle config --local --delete without pi
+```
+
+Now install the gems. You may occasionally need to re-run this as I update the repository and bring in new dependencies or update existing ones.
 
 ```
 bundle install
@@ -37,6 +47,7 @@ This script needs to know:
 * the serial numbers of your inverter and datalogger (the plug-in WiFi unit), which are normally printed on the sides.
 * which Octopus tariff you're on, AGILE-18-02-21 is my current one for Octopus Agile.
 * an API key to get tariff data from Octopus with. This can be generated in your Octopus Account page.
+* optionally on the Pi, a list of GPIOs you'll be controlling.
 
 Copy `rules.rb` from the example as a starting point:
 
@@ -70,13 +81,15 @@ After the datalogger reboots (this takes only a couple of seconds and does not a
 There are two components.
 
   * `server.rb` starts a HTTP server and is a long-running process that monitors the inverter for status packets (these include things like battery state-of-charge). We can then use this SOC in `octolux.rb`.
-  * `octolux.rb` is run either manually or from cron, and enables or disables AC charge depending on the rules written in it.
+  * `octolux.rb` is run either manually or from cron, and enables or disables AC charge depending on the rules written in `rules.rb` (you'll need to copy the example from docs/).
 
-It's split like this because there's no way to ask the inverter for the current battery SOC. You just have to wait (up to two minutes) for it to tell you. The server will return the latest SOC on-demand via HTTP.
+It's split like this because there's no way to ask the inverter for the current battery SOC. You just have to wait (up to two minutes) for it to tell you. The server will return the latest SOC on-demand via HTTP. If you're not interested in battery SOC you can ignore server.rb for now.
 
 ### server.rb
 
-TBD. This works but isn't used as part of `octolux.rb` yet. You can start it then send a GET request to it to get a JSON hash of inverter data back (once it populates, wait 2 minutes).
+In Progress.
+
+This works but isn't used as part of `octolux.rb` yet. You can start it then send a GET request to `/api/inputs` to get a JSON hash of inverter data back (once it populates, wait 2 minutes).
 
 ### octolux.rb
 
@@ -84,7 +97,7 @@ The design is that this script is intended to be run every half an hour, just af
 
 The first thing it does is check if you have up-to-date tariff data; if not it fetches some and stores it in `tariff_data.json`.
 
-There is currently one simple hardcoded rule in `octolux.rb` - if the current Octopus price (inc VAT) is 5p or lower, enable AC charging. If it is higher, then disable it. If the inverter was already in the correct state then no action is taken. Therefore this is safe to run as often as you like.
+There is currently one simple hardcoded rule in the example `rules.rb` - if the current Octopus price (inc VAT) is 5p or lower, enable AC charging. If it is higher, then disable it. If the inverter was already in the correct state then no action is taken. Therefore this is safe to run as often as you like.
 
 This is still rather a proof of concept, so use with care. It will output some logging information to tell you what it is doing.
 
@@ -136,20 +149,33 @@ In this case, you should run it again and hopefully this time it works. In futur
 
 ## Notes
 
-`octolux.rb` creates a `LuxController` object to do the heavy lifting. This object can do a few things:
+In your `rules.rb`, you have access to a few objects to do some heavy lifting.
 
-  * `lux.charge(true)` - enable AC charging
-  * `lux.charge(false)` - disable AC charging
-  * `lux.discharge(true)` - enable forced discharge
-  * `lux.discharge(false)` - disable forced discharge
-  * `lux.charge_pct` - get AC charge power rate, 0-100%
-  * `lux.charge_pct = 50` - set AC charge power rate to 50%
-  * `lux.discharge_pct` - get discharge power rate, 0-100%
-  * `lux.discharge_pct = 50` - set discharge power rate to 50%
+*`octopus`* contains Octopus tariff price data. The most interesting method here is `price`:
+
+  * `octopus.price` - the current tariff price, in pence
+  * `octopus.prices` - a Hash of tariff prices, starting with the current price. Keys are the start time of the price, values are the prices in pence.
+
+*`lc`* is a LuxController, which can do the following:
+
+  * `lc.charge(true)` - enable AC charging
+  * `lc.charge(false)` - disable AC charging
+  * `lc.discharge(true)` - enable forced discharge
+  * `lc.discharge(false)` - disable forced discharge
+  * `lc.charge_pct` - get AC charge power rate, 0-100%
+  * `lc.charge_pct = 50` - set AC charge power rate to 50%
+  * `lc.discharge_pct` - get discharge power rate, 0-100%
+  * `lc.discharge_pct = 50` - set discharge power rate to 50%
 
 Forced discharge may be useful if you're paid for export and you have a surplus of stored power when the export rate is high.
 
 Setting the power rates is probably a bit of a niche requirement. Note that discharge rate is *all* discharging, not just forced discharge. This can be used to cap the power being produced by the inverter. Setting it to 0 will disable discharging, even if not charging.
+
+*`gpio`* is a GPIO controller (only available on the Raspberry Pi). These two methods take a string which corresponds to your configuration. See the example config under the `[gpios]` section.
+
+  * `gpio.on('zappi')` - turn on the GPIO pin identified as *zappi* in your config.
+  * `gpio.off('zappi')` - turn off the GPIO pin identified as *zappi* in your config.
+  * `gpio.set('zappi', true)` - alternative way of turning on a GPIO. Pass `false` to turn it off.
 
 ## TODO
 
