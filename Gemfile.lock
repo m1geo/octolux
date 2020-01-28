@@ -3,7 +3,7 @@ GEM
   specs:
     inifile (3.0.0)
     lxp-packet (0.2.0)
-    rack (2.1.1)
+    rack (2.1.2)
     roda (3.28.0)
       rack
     rpi_gpio (0.3.3)
