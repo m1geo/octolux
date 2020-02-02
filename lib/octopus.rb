@@ -6,8 +6,7 @@ require 'json'
 require 'time'
 
 class Octopus
-  def initialize(key:, product_code:, tariff_code:)
-    @key = key
+  def initialize(product_code:, tariff_code:)
     @product_code = product_code
     @tariff_code = tariff_code
   end
@@ -82,8 +81,6 @@ class Octopus
   end
 
   def request
-    @request ||= Net::HTTP::Get.new(url.request_uri).tap do |request|
-      request.basic_auth @key, ''
-    end
+    @request ||= Net::HTTP::Get.new(url.request_uri)
   end
 end

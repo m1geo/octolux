@@ -3,8 +3,7 @@
 
 require_relative 'boot'
 
-octopus = Octopus.new(key: CONFIG['octopus']['api_key'],
-                      product_code: CONFIG['octopus']['product_code'],
+octopus = Octopus.new(product_code: CONFIG['octopus']['product_code'],
                       tariff_code: CONFIG['octopus']['tariff_code'])
 # if we have less than 6 hours of future $octopus tariff data, update it
 octopus.update if octopus.stale?
