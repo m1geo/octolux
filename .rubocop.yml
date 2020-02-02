@@ -1,7 +1,4 @@
 ---
-Style/GlobalVars:
-  Enabled: no
-
 Metrics/LineLength:
   Max: 120
 

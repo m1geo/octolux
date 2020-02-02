@@ -12,21 +12,17 @@ unless octopus.price
   exit 255
 end
 
-lc = LuxController.new(host: CONFIG['lxp']['host'],
+lc = LuxController.new(host: CONFIG['lxp']['host'], # rubocop:disable Lint/UselessAssignment
                        port: CONFIG['lxp']['port'],
                        serial: CONFIG['lxp']['serial'],
                        datalog: CONFIG['lxp']['datalog'])
 
-ls = LuxStatus.new(host: CONFIG['server']['host'],
+ls = LuxStatus.new(host: CONFIG['server']['host'], # rubocop:disable Lint/UselessAssignment
                    port: CONFIG['server']['port'])
 
-gpio = GPIO.new(gpios: CONFIG['gpios']) # abstraction of RPi::GPIO
+# abstraction of RPi::GPIO
+gpio = GPIO.new(gpios: CONFIG['gpios']) # rubocop:disable Lint/UselessAssignment
 
 raise('rules.rb not found!') unless File.readable?('rules.rb')
-
-# transitioning to local vars rather than globals to make web rules easier
-$octopus = octopus
-$lc = lc
-$ls = ls
 
 instance_eval(File.read('rules.rb'), 'rules.rb')
