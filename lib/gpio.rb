@@ -15,6 +15,7 @@ class GPIO
     return unless defined?(RPi)
 
     RPi::GPIO.set_numbering(:board)
+    RPi::GPIO.set_warnings(false)
 
     # initialise each GPIOs as output
     gpios.each_value { |pin| setup(pin) }
