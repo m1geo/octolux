@@ -36,14 +36,18 @@ class Octopus
     end
   end
 
-  # Munge tariff data into a hash of ascending time (from) -> price (inc vat)
+  # Munge tariff data into a hash of ascending time (from) -> price (inc vat),
+  # starting with the current time period
   #
   # Cope with nil from tariff_data, which can happen if there's no data.
   #
   def prices
     Array(tariff_data&.fetch('results', nil)).map do |t|
+      # skip periods before the current time
+      next unless Time.parse(t['valid_to']) >= Time.now
+
       [Time.parse(t['valid_from']), t['value_inc_vat']]
-    end.sort.to_h
+    end.compact.sort.to_h
   end
 
   # Current price
