@@ -11,8 +11,8 @@ LOGGER.info "Current Octopus Unit Price: #{octopus.price}p"
 
 # $ls is LuxStatus. This is gleaned from the optional server.rb since the
 # data in it is only sent by the inverter every 2 minutes.
-#   .data is a hash of data. this will be empty if we cannot fetch the status
-# LOGGER.info "Battery SOC = #{ls.data['soc']}%" if ls.data['soc']
+#   .inputs is a hash of input data. this will be empty if we cannot fetch the status
+# LOGGER.info "Battery SOC = #{ls.data['soc']}%" if ls.inputs['soc']
 
 begin
   # if the current price is 5p or lower, enable AC charge
