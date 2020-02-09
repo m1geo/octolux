@@ -8,7 +8,8 @@ class LuxListener
   class << self
     def run
       loop do
-        listen(LuxSocket.new(host: CONFIG['lxp']['host'], port: CONFIG['lxp']['port']))
+        socket = LuxSocket.new(host: CONFIG['lxp']['host'], port: CONFIG['lxp']['port'])
+        listen(socket)
       rescue StandardError => e
         LOGGER.error "Socket Error: #{e}"
         LOGGER.info 'Reconnecting in 5 seconds'
@@ -45,6 +46,8 @@ class LuxListener
         inputs.merge!(pkt.to_h) if pkt.is_a?(LXP::Packet::ReadInput)
         registers[pkt.register] = pkt.value if pkt.is_a?(LXP::Packet::ReadHold)
       end
+    ensure
+      socket.close
     end
   end
 end

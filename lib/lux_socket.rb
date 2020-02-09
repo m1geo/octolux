@@ -8,6 +8,10 @@ class LuxSocket
     @port = port
   end
 
+  def close
+    socket.close
+  end
+
   # Write a packet to the socket.
   def write(pkt)
     socket.write(pkt.to_bin)
