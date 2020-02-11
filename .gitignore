@@ -2,4 +2,5 @@ rules.rb
 config.ini
 tariff_data.json
 cheap_slot_data.json
+solcast_data.json
 vendor/*
