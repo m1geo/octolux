@@ -21,12 +21,9 @@
 # approaching (defined as over 15p) and your SOC is below 50%.
 #
 # Additionally, it turns off discharging (making the inverter idle) if the
-# Agile price is "cheap enough", which varies depending on how much SOC you have.
-# At 50% SOC, if we're in an Agile period that is in the lower 10th percentile
-# pricing (considered over the next 10 hours), we set the inverter idle. Same for
-# 20th percentile at 40% SOC, and 50th percentile at 30% SOC. This is sort of a
-# middle-ground between energy that is too expensive to charge the batteries, but
-# cheap enough that discharging them is not the best use of the stored power.
+# Agile price is "cheap enough". This is a bit rudimentary at the moment but
+# is currently set to activate if you're below 50% SOC, and the price is less
+# than 1.2x the highest price we have in the cheap_slots file.
 
 LOGGER.info "Current Price = #{octopus.price}p"
 
