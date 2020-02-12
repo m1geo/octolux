@@ -32,17 +32,17 @@ class LuxController
 
   # Untested - set current charge power %
   def charge_pct=(pct)
-    set_register(LXP::Packet::Registers::CHARGE_POWER_PERCENT_CMD, pct) == pct
+    set_register(LXP::Packet::Registers::CHARGE_POWER_PERCENT_CMD, pct)
   end
 
-  # Untested - get current discharge power %
+  # Get current discharge power %
   def discharge_pct
     read_register(LXP::Packet::Registers::DISCHG_POWER_PERCENT_CMD)
   end
 
-  # Untested - set current discharge power %
+  # Set current discharge power %
   def discharge_pct=(pct)
-    set_register(LXP::Packet::Registers::DISCHG_POWER_PERCENT_CMD, pct) == pct
+    set_register(LXP::Packet::Registers::DISCHG_POWER_PERCENT_CMD, pct)
   end
 
   private
@@ -77,7 +77,8 @@ class LuxController
       raise SocketError
     end
 
-    LOGGER.debug "read_register #{register} result = #{r.value}"
+    # LOGGER.debug "read_register #{register} result = #{r.value}"
+
     r.value
   end
 
@@ -93,7 +94,7 @@ class LuxController
       raise SocketError
     end
 
-    LOGGER.debug "set_register reply = #{r.value}"
+    # LOGGER.debug "set_register reply = #{r.value}"
 
     r.value
   end
