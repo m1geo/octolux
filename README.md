@@ -21,15 +21,13 @@ git clone https://github.com/celsworth/octolux.git
 cd octolux
 ```
 
-Install dependencies with bundler. This will install gems to `./vendor/bundle`, and so should not need root.
-
-Firstly, if you are running on a Raspberry Pi and want to use the GPIO support, you need to enable installing it with:
+If you are running on a Raspberry Pi and want to use the GPIO support, you need to enable installing it with:
 
 ```
 bundle config --local --delete without pi
 ```
 
-Now install the gems. You may occasionally need to re-run this as I update the repository and bring in new dependencies or update existing ones.
+Now install the gems. You may occasionally need to re-run this as I update the repository and bring in new dependencies or update existing ones.  This will install gems to `./vendor/bundle`, and so should not need root.
 
 ```
 bundle install
