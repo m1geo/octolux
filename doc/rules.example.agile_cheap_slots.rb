@@ -35,8 +35,7 @@ required_soc = 90 # TODO: solcast forecast could bias this
 soc = ls.inputs['soc'] || 10 # assume 10% if we don't have it
 
 system_size = 2.4 * battery_count # kWh per battery * number of batteries
-usable_size = system_size * 0.8
-charge_size = usable_size * ((required_soc - soc) / 100.0)
+charge_size = system_size * ((required_soc - soc) / 100.0)
 hours_required = charge_size / charge_rate # at a charge rate of 3.3kW
 slots_required = (hours_required * 2).ceil # half-hourly Agile periods
 
@@ -49,21 +48,19 @@ LOGGER.info "SOC = #{soc}% / #{required_soc}%, " \
 # cheap_slot_data.json is our cache of what we'll be doing tonight.
 f = Pathname.new('cheap_slot_data.json')
 data = f.readable? ? JSON.parse(f.read) : {}
-updated_at = data['updated_at']
 
-after_8 = Time.now.hour >= 20
-# stale = updated_at.nil? || Time.now - Time.parse(updated_at) > 14_400
+after_8 = Time.now.hour >= 20 || Time.now.hour < 1
+# stale = data['updated_at'].nil? || Time.now - Time.parse(data['updated_at']) > 14_400
 have_prices = octopus.prices.count > 20
 
 if after_8 && have_prices
-  # if it is later than 9pm and we haven't run today, do so now
   cheapest_slots = octopus.prices
                           .take(20) # 10 hours
                           .sort_by { |_k, v| v }.to_h
                           .take(slots_required)
                           .sort.to_h
 
-  cheapest_slots.each { |time, price| LOGGER.debug "Charge Slot: #{time} at #{price}p" }
+  cheapest_slots.each { |time, price| LOGGER.info "Charge Slot: #{time} at #{price}p" }
 
   data = { 'updated_at' => Time.now, 'slots' => cheapest_slots }
   f.write(JSON.generate(data))
@@ -76,11 +73,11 @@ charge = data['slots'].any? do |time, _price|
   time == now
 end
 
-LOGGER.info 'Charging due to cheap_slot_data' if charge
+LOGGER.info 'Charging due to scheduled charge slot' if charge
 
 # override for any really cheap energy as a failsafe
 if octopus.price < 2
-  LOGGER.info 'Charging due to price < 2p'
+  LOGGER.info 'Charging due to really cheap price'
   charge = true
 end
 
@@ -90,18 +87,17 @@ if soc < 50 && octopus.prices.values.take(3).max > 15 && octopus.price < 15
   charge = true
 end
 
-# do not discharge if the electricity price is a percentage within the cost
-# we've charged at. this avoids charging at 1p, to then discharge at 1.1p an hour later.
-max_charge_price = data['slots'].values.max || 0
-discharge_price_cap = max_charge_price * 1.2
-discharge_pct = 100
-discharge_pct = 0 if soc < 50 && octopus.price <= discharge_price_cap
+# do not discharge if the electricity price is not much higher than we've charged at.
+# this avoids charging at 2p, to then discharge at 2.1p an hour later, which would be
+# a loss after charging overheads
+avg_charge_price = (data['slots'].values.inject(:+) / data['slots'].count) || 0
+discharge_price_cap = (avg_charge_price * 1.2) + 1
+discharge_pct = octopus.price <= discharge_price_cap ? 0 : 100
 
-LOGGER.debug "max_charge_price = #{max_charge_price}p; discharge_price_cap = #{discharge_price_cap}p"
+LOGGER.info "avg_charge_price = #{avg_charge_price.round(3)}p; " \
+  "discharge_price_cap = #{discharge_price_cap.round(3)}p"
 
-if lc.discharge_pct != discharge_pct
-  r = (lc.discharge_pct = discharge_pct)
-  exit 255 unless r == discharge_pct
-end
+r = (lc.discharge_pct = discharge_pct)
+exit 255 unless r == discharge_pct
 
 exit 255 unless lc.charge(charge)
