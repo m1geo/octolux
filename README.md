@@ -77,74 +77,34 @@ After the datalogger reboots (this takes only a couple of seconds and does not a
 
 There are two components.
 
-  * `server.rb` starts a HTTP server and is a long-running process that monitors the inverter for status packets (these include things like battery state-of-charge). We can then use this SOC in `octolux.rb`.
-  * `octolux.rb` is run either manually or from cron, and enables or disables AC charge depending on the rules written in `rules.rb` (you'll need to copy the example from docs/).
+### server.rb
+
+`server.rb` starts a HTTP server and is a long-running process that monitors the inverter for status packets (these include things like battery state-of-charge). We can then use this SOC in `octolux.rb`.
 
 It's split like this because there's no way to ask the inverter for the current battery SOC. You just have to wait (up to two minutes) for it to tell you. The server will return the latest SOC on-demand via HTTP. If you're not interested in battery SOC you can ignore server.rb for now.
 
-### server.rb
+If you do want to run it, the simplest thing to do is just start it in screen:
 
-In Progress.
+```
+screen
+./server.rb
+```
 
-This works but isn't used as part of `octolux.rb` yet. You can start it then send a GET request to `/api/inputs` to get a JSON hash of inverter data back (once it populates, wait 2 minutes).
+A systemd unit file will be added at some point so it starts automatically on boot.
 
 ### octolux.rb
 
-The design is that this script is intended to be run every half an hour, just after the tariff price has changed. Running it in cron on the hour and half-hour should be fine, or even more frequently.
+`octolux.rb` is intended to be from cron, and enables or disables AC charge depending on the logic written in `rules.rb` (you'll need to copy/edit an example from docs/).
 
-The first thing it does is check if you have up-to-date tariff data; if not it fetches some and stores it in `tariff_data.json`.
-
-There is currently one simple hardcoded rule in the example `rules.rb` - if the current Octopus price (inc VAT) is 5p or lower, enable AC charging. If it is higher, then disable it. If the inverter was already in the correct state then no action is taken. Therefore this is safe to run as often as you like.
-
-This is still rather a proof of concept, so use with care. It will output some logging information to tell you what it is doing.
-
-An example of the price being below 5p, so it enables AC charging:
+There's also a wrapper script, `octolux.sh`, which will divert output to a logfile (`octolux.log`), and also re-runs `octolux.rb` if it fails the first time (usually due to transient failures like the inverter not responding, which can occasionally happen). You'll want something like this in cron:
 
 ```
-~/src/octolux> ./octolux.rb
-I, [2020-01-15T10:53:01.221311 #81551]  INFO -- : Current Octopus Unit Price: 4.0125p
-D, [2020-01-15T10:53:01.221783 #81551] DEBUG -- : charge(true)
-D, [2020-01-15T10:53:01.221813 #81551] DEBUG -- : update_register(21, 128, true)
-D, [2020-01-15T10:53:01.221823 #81551] DEBUG -- : read_register(21)
-D, [2020-01-15T10:53:02.059861 #81551] DEBUG -- : read_register 21 result = 62292
-D, [2020-01-15T10:53:02.059941 #81551] DEBUG -- : set_register(21 62420)
+0,30 * * * * /home/pi/octolux/octolux.sh
 ```
 
-An example of the price being above 5p, so it disables AC charging:
 
-```
-I, [2020-01-15T10:53:25.204004 #81782]  INFO -- : Current Octopus Unit Price: 8.2215p
-D, [2020-01-15T10:53:25.204536 #81782] DEBUG -- : charge(false)
-D, [2020-01-15T10:53:25.204557 #81782] DEBUG -- : update_register(21, 128, false)
-D, [2020-01-15T10:53:25.204567 #81782] DEBUG -- : read_register(21)
-D, [2020-01-15T10:53:26.135141 #81782] DEBUG -- : read_register 21 result = 62420
-D, [2020-01-15T10:53:26.135204 #81782] DEBUG -- : set_register(21 62292)
-```
 
-If the inverter is already in the correct state, you'll see something like:
-
-```
-I, [2020-01-15T10:57:23.718003 #81969]  INFO -- : Current Octopus Unit Price: 8.2215p
-D, [2020-01-15T10:57:23.718634 #81969] DEBUG -- : charge(false)
-D, [2020-01-15T10:57:23.718658 #81969] DEBUG -- : update_register(21, 128, false)
-D, [2020-01-15T10:57:23.718670 #81969] DEBUG -- : read_register(21)
-D, [2020-01-15T10:57:24.829219 #81969] DEBUG -- : read_register 21 result = 62292
-D, [2020-01-15T10:57:24.829271 #81969] DEBUG -- : register already has correct value, nothing to do
-```
-
-Occasionally the inverter fails to reply, this isn't really handled yet, but it does tell you about it:
-
-```
-I, [2020-01-15T10:57:11.762791 #81932]  INFO -- : Current Octopus Unit Price: 8.2215p
-D, [2020-01-15T10:57:11.763346 #81932] DEBUG -- : charge(false)
-D, [2020-01-15T10:57:11.763365 #81932] DEBUG -- : update_register(21, 128, false)
-D, [2020-01-15T10:57:11.763377 #81932] DEBUG -- : read_register(21)
-F, [2020-01-15T10:57:21.366535 #81932] FATAL -- : invalid/no reply from inverter
-```
-
-In this case, you should run it again and hopefully this time it works. In future I'll add some retry logic.
-
-## Notes
+## Development Notes
 
 In your `rules.rb`, you have access to a few objects to do some heavy lifting.
 
@@ -173,21 +133,3 @@ Setting the power rates is probably a bit of a niche requirement. Note that disc
   * `gpio.on('zappi')` - turn on the GPIO pin identified as *zappi* in your config.
   * `gpio.off('zappi')` - turn off the GPIO pin identified as *zappi* in your config.
   * `gpio.set('zappi', true)` - alternative way of turning on a GPIO. Pass `false` to turn it off.
-
-## TODO
-
-### Retry logic if inverter fails to answer
-
-Self-explanatory. If the inverter doesn't answer, we should probably close the socket and try again.
-
-### Knowledge of state-of-charge so we can write rules based on it
-
-Vague plan to make a HTTP service that talks to the inverter and runs permanently, then other one-off Ruby scripts to control it that can run from cron etc. Will just need to get the TCP comms bulletproof for this to work reliably.
-
-This is WIP in server.rb. It connects to the inverter, listens for packets, and makes them available over a simple webserver. Not used in octolux.rb yet.
-
-### Run in a daemon with a web interface
-
-This would move away from the idea of running `octolux.rb` in cron, to running `server.rb` constantly, which handles everything; checking Octopus prices regularly and setting inverter state.
-
-Could also run a simple web interface to show the current state and set overrides, schedules and so on.
