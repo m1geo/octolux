@@ -58,7 +58,7 @@ class LuxController
     old_val = read_register(register)
     enabled = (old_val & bit) == bit
     if enable == enabled
-      LOGGER.debug 'register already has correct value, nothing to do'
+      LOGGER.debug "update_register(#{register}) => no action required"
       return true
     end
 
@@ -77,13 +77,13 @@ class LuxController
       raise SocketError
     end
 
-    # LOGGER.debug "read_register #{register} result = #{r.value}"
+    LOGGER.debug "read_register(#{register}) => #{r.value}"
 
     r.value
   end
 
   def set_register(register, val)
-    LOGGER.debug "set_register(#{register} #{val})"
+    LOGGER.debug "set_register(#{register}, #{val})"
 
     pkt = packet(type: LXP::Packet::WriteSingle, register: register)
     pkt.value = val
@@ -94,7 +94,7 @@ class LuxController
       raise SocketError
     end
 
-    # LOGGER.debug "set_register reply = #{r.value}"
+    LOGGER.debug "set_register(#{register}) => #{r.value}"
 
     r.value
   end
