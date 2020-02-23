@@ -11,4 +11,6 @@ require 'rack'
 # start a background thread which will listen for inverter packets
 Thread.new { LuxListener.run }
 
-Rack::Server.start(Host: 'localhost', Port: 4346, app: App.freeze.app)
+Rack::Server.start(Host: CONFIG['server']['host'],
+                   Port: CONFIG['server']['port'],
+                   app: App.freeze.app)
