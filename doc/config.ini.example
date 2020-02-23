@@ -15,7 +15,7 @@ tariff_code = E-1R-AGILE-18-02-21-E
 
 # where the optional server.rb is running, if available
 [server]
-host = localhost
+host = localhost # use 0.0.0.0 to make the server available externally
 port = 4346
 
 # an optional list of GPIOs you'd like to control on a Raspberry Pi.
