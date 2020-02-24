@@ -59,19 +59,7 @@ The idea behind keeping the rules separate is you can edit it and be unaffected 
 
 ### Inverter Setup
 
-By default, the datalogger plugged into the Lux sends statistics about your inverter to LuxPower in China. This is how their web portal and phone app knows all about you.
-
-We need to configure it to open another port that we can talk to. Open a web browser to your datalogger IP (might have to check your DHCP server to find it) and login with username/password admin/admin. Click English in the top right :)
-
-You should see:
-
-![](doc/lux_run_state.png)
-
-Tap on Network Setting in the menu. You should see two forms, the top one is populated with LuxPower's IP in China - the second one we can use. Configure it to look like the below and save:
-
-![](doc/lux_network_setting.png)
-
-After the datalogger reboots (this takes only a couple of seconds and does not affect the main inverter operation, it will continue as normal), port 4346 on your inverter IP is accessible to our Ruby script. You should be sure that this port is only accessible via your LAN, and not exposed to the Internet, or anyone can control your inverter.
+Moved to a separate document, see [INVERTER_SETUP.md](doc/INVERTER_SETUP.md).
 
 
 ## Usage
