@@ -3,6 +3,7 @@ host = 192.168.0.200
 port = 4346
 serial = 9393013580
 datalog = EF76460231
+batteries = 4
 
 # these can be obtained from your Octopus account;
 # see the URL under Unit Rates at https://octopus.energy/dashboard/developer/

@@ -43,6 +43,7 @@ This script needs to know:
 
 * where to find your Lux inverter, host and port.
 * the serial numbers of your inverter and datalogger (the plug-in WiFi unit), which are normally printed on the sides.
+* how many batteries you have, which determines the maximum charge rate (used in agile_cheap_slots rules)
 * which Octopus tariff you're on, AGILE-18-02-21 is my current one for Octopus Agile.
 * optionally on the Pi, a list of GPIOs you'll be controlling.
 
