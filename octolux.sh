@@ -11,3 +11,5 @@ run() {
 # If octolux.rb quits with a non-zero status code, run it again.
 # This catches occasional failures due to the inverter not responding etc.
 run || (sleep 10 && run)
+
+echo -e "\n---\n" >>$DIR/octolux.log
