@@ -5,3 +5,4 @@ cheap_slot_data.json
 solcast_data.json
 vendor/*
 Gemfile.lock
+logs/*

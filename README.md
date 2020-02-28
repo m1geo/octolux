@@ -91,6 +91,13 @@ There's also a wrapper script, `octolux.sh`, which will divert output to a logfi
 0,30 * * * * /home/pi/octolux/octolux.sh
 ```
 
+To complement the wrapper script, there's a log rotation script which you can use like this:
+
+```
+59 23 * * * /home/pi/octolux/rotate.sh
+```
+
+This will move the current `octolux.log` into `logs/octolux.YYYYMMDD.log` at 23:59 each night.
 
 
 ## Development Notes
