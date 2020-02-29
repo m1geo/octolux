@@ -31,7 +31,8 @@ LOGGER.info "Current Price = #{octopus.price}p"
 battery_count = 6
 charge_rate = 3.3 # kW
 
-required_soc = 90 # TODO: solcast forecast could bias this
+# TODO: solcast forecast could bias this
+required_soc = CONFIG['rules']['required_soc'].to_i
 soc = ls.inputs['soc'] || 10 # assume 10% if we don't have it
 
 system_size = 2.4 * battery_count # kWh per battery * number of batteries

@@ -25,3 +25,6 @@ port = 4346
 # See https://www.raspberrypi-spy.co.uk/wp-content/uploads/2012/06/Raspberry-Pi-GPIO-Header-with-Photo.png
 [gpios]
 zappi = 5
+
+[rules]
+required_soc = 90
