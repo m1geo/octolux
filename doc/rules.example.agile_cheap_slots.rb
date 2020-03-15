@@ -70,7 +70,8 @@ multiplier = if soc < 30 then 1.6
              else
                1.1
              end
-min_discharge_price = (max_charge_price * multiplier).round(4)
+min_discharge_price = max_charge_price * multiplier
+min_discharge_price = [min_discharge_price, CONFIG['rules']['min_discharge'].to_f].max.round(4)
 discharge_slots = slots.delete_if { |_k, v| v <= min_discharge_price }.to_h
 # discharge_slots.sort.each { |time, price| LOGGER.info "Discharge: #{time} @ #{price}p" }
 

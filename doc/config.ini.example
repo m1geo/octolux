@@ -27,4 +27,10 @@ port = 4346
 zappi = 5
 
 [rules]
+# use the cheapest energy to get the batteries to this SOC each night
 required_soc = 90
+# always charge when electricity is cheaper than this unit price,
+# even if the SOC is already higher than required_soc
+cheap_charge = 2
+# never discharge when electricity is cheaper than this unit price
+min_discharge = 3
