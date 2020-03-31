@@ -18,8 +18,8 @@ now = Time.at(1800 * (Time.now.to_i / 1800))
 f = Pathname.new('cheap_slot_data.json')
 data = f.readable? ? JSON.parse(f.read) : {}
 
-# charge_slots are worked out each evening after 9pm, when we have new Octopus price data.
-evening = now.hour >= 21
+# charge_slots are worked out each evening after 6pm, when we have new Octopus price data.
+evening = now.hour >= 18
 stale = data['updated_at'].nil? || Time.now - Time.parse(data['updated_at']) > (23 * 60 * 60)
 have_prices = octopus.prices.count > 20
 if (evening || stale) && have_prices
@@ -87,7 +87,7 @@ discharge = discharge_slots.any? { |time, _price| time == now }
 LOGGER.info "ac_charge = #{ac_charge} ; discharge = #{discharge} (> #{min_discharge_price}p)"
 
 # if a peak period is approaching and we're under 50%, start emergency charge
-if soc < 50 && octopus.prices.values.take(3).max > 15 && octopus.price < 15
+if soc < 50 && octopus.prices.values.take(4).max > 15 && octopus.price < 15
   LOGGER.warn 'Peak approaching, emergency charging'
   ac_charge = true
 end
