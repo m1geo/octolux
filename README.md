@@ -69,7 +69,7 @@ There are two components.
 
 `server.rb` is a long-running process that we use for background work. In particular, it monitors the inverter for status packets (these include things like battery state-of-charge).
 
-It starts a HTTP server which `octolux.rb` can then query to get realtime inverter data. It can also connect to MQTT and publish inverter information there. See [MQTT.md](doc/MQTT.md) for more information about this.
+It starts a HTTP server which `octolux.rb` can then query to get realtime inverter data. It can also connect to MQTT and publish inverter information there. See [MQ.md](doc/MQ.md) for more information about this.
 
 It's split like this because there's no way to ask the inverter for the current battery SOC. You just have to wait (up to two minutes) for it to tell you. The server will return the latest SOC on-demand via HTTP.
 
