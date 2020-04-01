@@ -21,16 +21,16 @@ git clone https://github.com/celsworth/octolux.git
 cd octolux
 ```
 
-If you are running on a Raspberry Pi and want to use the GPIO support, you need to enable installing it with:
-
-```
-bundle config --local --delete without pi
-```
-
 Now install the gems. You may occasionally need to re-run this as I update the repository and bring in new dependencies or update existing ones.  This will install gems to `./vendor/bundle`, and so should not need root.
 
 ```
 bundle install
+```
+
+If you are running on a Raspberry Pi and want to use the GPIO support, you can install it with: (you only need to do this once, subsequent `bundle installs` will remember you want the pi package)
+
+```
+bundle install --with pi
 ```
 
 Create a `config.ini` using the `doc/config.ini.example` as a template:
