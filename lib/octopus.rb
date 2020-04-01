@@ -47,7 +47,7 @@ class Octopus
       # skip periods before the current time
       next unless Time.parse(t['valid_to']) >= Time.now
 
-      [Time.parse(t['valid_from']), t['value_inc_vat']]
+      [Time.parse(t['valid_from']).localtime, t['value_inc_vat']]
     end.compact.sort.to_h
   end
 
