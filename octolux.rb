@@ -12,16 +12,21 @@ unless octopus.price
   exit 255
 end
 
-lc = LuxController.new(host: CONFIG['lxp']['host'], # rubocop:disable Lint/UselessAssignment
+# rubocop:disable Lint/UselessAssignment
+
+# FIXME: duplicated in mq.rb, could move to boot.rb?
+lc = LuxController.new(host: CONFIG['lxp']['host'],
                        port: CONFIG['lxp']['port'],
                        serial: CONFIG['lxp']['serial'],
                        datalog: CONFIG['lxp']['datalog'])
 
-ls = LuxStatus.new(host: CONFIG['server']['host'], # rubocop:disable Lint/UselessAssignment
+ls = LuxStatus.new(host: CONFIG['server']['connect_host'] || CONFIG['server']['host'],
                    port: CONFIG['server']['port'])
 
 # abstraction of RPi::GPIO
-gpio = GPIO.new(gpios: CONFIG['gpios']) # rubocop:disable Lint/UselessAssignment
+gpio = GPIO.new(gpios: CONFIG['gpios'])
+
+# rubocop:enable Lint/UselessAssignment
 
 raise('rules.rb not found!') unless File.readable?('rules.rb')
 

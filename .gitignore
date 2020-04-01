@@ -6,3 +6,4 @@ solcast_data.json
 vendor/*
 Gemfile.lock
 logs/*
+octolux.log
