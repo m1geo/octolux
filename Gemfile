@@ -17,3 +17,7 @@ group :webserver do
   gem 'slim'
   gem 'tilt'
 end
+
+group :mqtt do
+  gem 'mqtt-sub_handler'
+end

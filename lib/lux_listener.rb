@@ -43,11 +43,30 @@ class LuxListener
         next unless (pkt = socket.read_packet)
 
         @last_packet = Time.now
-        inputs.merge!(pkt.to_h) if pkt.is_a?(LXP::Packet::ReadInput)
-        registers[pkt.register] = pkt.value if pkt.is_a?(LXP::Packet::ReadHold)
+        process_input(pkt) if pkt.is_a?(LXP::Packet::ReadInput)
+        process_hold(pkt) if pkt.is_a?(LXP::Packet::ReadHold)
+        process_hold(pkt) if pkt.is_a?(LXP::Packet::WriteSingle)
       end
     ensure
       socket.close
+    end
+
+    def process_input(pkt)
+      inputs.merge!(pkt.to_h)
+
+      n = case pkt
+          when LXP::Packet::ReadInput1 then 1
+          when LXP::Packet::ReadInput2 then 2
+          when LXP::Packet::ReadInput3 then 3
+          end
+
+      MQ.publish("octolux/inputs/#{n}", pkt.to_h)
+    end
+
+    def process_hold(pkt)
+      registers[pkt.register] = pkt.value
+
+      MQ.publish("octolux/hold/#{pkt.register}", pkt.value)
     end
   end
 end

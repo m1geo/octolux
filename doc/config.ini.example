@@ -14,10 +14,18 @@ batteries = 4
 product_code = AGILE-18-02-21
 tariff_code = E-1R-AGILE-18-02-21-E
 
-# where the optional server.rb is running, if available
 [server]
-host = localhost # use 0.0.0.0 to make the server available externally
+# used by server.rb to open a listening port.
+# use 0.0.0.0 here to make the server available externally
+listen_host = localhost
+# used by octolux.rb to connect to server.rb
+connect_host = localhost
 port = 4346
+
+[mqtt]
+# see https://github.com/mqtt/mqtt.github.io/wiki/URI-Scheme for URI help
+# you can leave this commented out if you don't want to use MQTT at all.
+# uri = mqtt://nas:1883
 
 # an optional list of GPIOs you'd like to control on a Raspberry Pi.
 # the names are used in your rules.rb and can be anything you like.

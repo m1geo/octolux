@@ -45,6 +45,7 @@ This script needs to know:
 * the serial numbers of your inverter and datalogger (the plug-in WiFi unit), which are normally printed on the sides.
 * how many batteries you have, which determines the maximum charge rate (used in agile_cheap_slots rules)
 * which Octopus tariff you're on, AGILE-18-02-21 is my current one for Octopus Agile.
+* if you're using MQTT, where to find your MQTT server.
 * optionally on the Pi, a list of GPIOs you'll be controlling.
 
 Copy `rules.rb` from the example as a starting point:
@@ -52,8 +53,6 @@ Copy `rules.rb` from the example as a starting point:
 ```
 cp doc/rules.example.5p.rb rules.rb
 ```
-
-This default one simply enables AC charging when the tariff price is 5p or lower, and disables it otherwise. Perhaps more exotic examples to follow.
 
 The idea behind keeping the rules separate is you can edit it and be unaffected by any changes to the main script in the git repository (hopefully).
 
@@ -68,11 +67,13 @@ There are two components.
 
 ### server.rb
 
-`server.rb` starts a HTTP server and is a long-running process that monitors the inverter for status packets (these include things like battery state-of-charge). We can then use this SOC in `octolux.rb`.
+`server.rb` is a long-running process that we use for background work. In particular, it monitors the inverter for status packets (these include things like battery state-of-charge).
 
-It's split like this because there's no way to ask the inverter for the current battery SOC. You just have to wait (up to two minutes) for it to tell you. The server will return the latest SOC on-demand via HTTP. If you're not interested in battery SOC you can ignore server.rb for now.
+It starts a HTTP server which `octolux.rb` can then query to get realtime inverter data. It can also connect to MQTT and publish inverter information there. See [MQTT.md](doc/MQTT.md) for more information about this.
 
-If you do want to run it, the simplest thing to do is just start it in screen:
+It's split like this because there's no way to ask the inverter for the current battery SOC. You just have to wait (up to two minutes) for it to tell you. The server will return the latest SOC on-demand via HTTP.
+
+The simplest thing to do is just start it in screen:
 
 ```
 screen
