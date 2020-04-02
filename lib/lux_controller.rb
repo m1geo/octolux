@@ -13,6 +13,11 @@ class LuxController
     @datalog = datalog.to_s
   end
 
+  def close
+    @socket&.close
+    @socket = nil
+  end
+
   def charge(enable)
     LOGGER.debug "charge(#{enable})"
     update_register(21, LXP::Packet::RegisterBits::AC_CHARGE_ENABLE, enable)

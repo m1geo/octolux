@@ -8,18 +8,21 @@ class MQ
       sub.subscribe_to 'octolux/cmd/ac_charge' do |data|
         LOGGER.info "MQ cmd/ac_charge => #{data}"
         r = lux_controller.charge(bool(data))
+        lux_controller.close
         sub.publish_to('octolux/result/ac_charge', r ? 'OK' : 'FAIL')
       end
 
       sub.subscribe_to 'octolux/cmd/forced_discharge' do |data|
         LOGGER.info "MQ cmd/forced_discharge => #{data}"
         r = lux_controller.discharge(bool(data))
+        lux_controller.close
         sub.publish_to('octolux/result/forced_discharge', r ? 'OK' : 'FAIL')
       end
 
       sub.subscribe_to 'octolux/cmd/charge_pct' do |data|
         LOGGER.info "MQ cmd/charge_pct => #{data}"
         r = (lux_controller.charge_pct = data.to_i)
+        lux_controller.close
         sub.publish_to('octolux/result/charge_pct',
                        r == data.to_i ? 'OK' : 'FAIL')
       end
@@ -27,6 +30,7 @@ class MQ
       sub.subscribe_to 'octolux/cmd/discharge_pct' do |data|
         LOGGER.info "MQ cmd/discharge_pct => #{data}"
         r = (lux_controller.discharge_pct = data.to_i)
+        lux_controller.close
         sub.publish_to('octolux/result/discharge_pct',
                        r == data.to_i ? 'OK' : 'FAIL')
       end
