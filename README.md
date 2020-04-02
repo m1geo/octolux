@@ -8,10 +8,12 @@ There's also support for toggling Raspberry Pi GPIO pins as an added bonus.
 
 ## Installation
 
-You'll need Ruby - at least 2.3 should be fine, which can be found in all good Linux distributions. Git is installed here too so you can clone the repository.
+You'll need Ruby - at least 2.3 should be fine, which can be found in all good Linux distributions.
+
+This apt-get command also installs the Ruby development headers and a compiler so Ruby can build extensions as part of installing dependencies:
 
 ```
-sudo apt-get install ruby ruby-bundler git
+sudo apt-get install ruby ruby-dev ruby-bundler git build-essential
 ```
 
 Clone this repository to your machine:
@@ -21,16 +23,16 @@ git clone https://github.com/celsworth/octolux.git
 cd octolux
 ```
 
-Now install the gems. You may occasionally need to re-run this as I update the repository and bring in new dependencies or update existing ones.  This will install gems to `./vendor/bundle`, and so should not need root.
+Now install the gems. You may occasionally need to re-run this as I update the repository and bring in new dependencies or update existing ones.  This will install gems to `./vendor/bundle`, and so should not need root:
 
 ```
-bundle install
+bundle update
 ```
 
 If you are running on a Raspberry Pi and want to use the GPIO support, you can install it with: (you only need to do this once, subsequent `bundle installs` will remember you want the pi package)
 
 ```
-bundle install --with pi
+bundle update --with pi
 ```
 
 Create a `config.ini` using the `doc/config.ini.example` as a template:
