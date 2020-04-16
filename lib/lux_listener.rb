@@ -12,6 +12,7 @@ class LuxListener
         listen(socket)
       rescue StandardError => e
         LOGGER.error "Socket Error: #{e}"
+        LOGGER.debug e.backtrace.join("\n")
         LOGGER.info 'Reconnecting in 5 seconds'
         sleep 5
       end
