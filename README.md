@@ -32,7 +32,7 @@ bundle update
 If you are running on a Raspberry Pi and want to use the GPIO support, you can install it with: (you only need to do this once, subsequent `bundle installs` will remember you want the pi package)
 
 ```
-bundle update --with pi
+bundle install --with pi
 ```
 
 Create a `config.ini` using the `doc/config.ini.example` as a template:
