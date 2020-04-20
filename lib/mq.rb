@@ -39,13 +39,17 @@ class MQ
     end
 
     def publish(topic, message)
-      sub.publish_to(topic, message)
+      sub.publish_to(topic, message) if uri
     end
 
     private
 
+    def uri
+      CONFIG['mqtt']['uri']
+    end
+
     def sub
-      @sub ||= MQTT::SubHandler.new(CONFIG['mqtt']['uri'])
+      @sub ||= MQTT::SubHandler.new(uri)
     end
 
     def lux_controller
