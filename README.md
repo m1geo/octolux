@@ -82,7 +82,15 @@ screen
 ./server.rb
 ```
 
-A systemd unit file will be added at some point so it starts automatically on boot.
+Alternatively, you can use the provided systemd unit file. The instructions below will start it immediately, and then automatically on reboot. You'll need to be root to do these steps:
+
+```
+cp systemd/octolux_server.service /etc/systemd/system
+systemctl start octolux_server.service
+systemctl enable octolux_server.service
+```
+
+The logs can then be seen with `journalctl -u octolux_server.service`.
 
 ### octolux.rb
 
