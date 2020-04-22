@@ -1,6 +1,6 @@
 [lxp]
 host = 192.168.0.200
-port = 4346
+port = 8000
 serial = 9393013580
 datalog = EF76460231
 batteries = 4
