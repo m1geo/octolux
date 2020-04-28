@@ -62,6 +62,9 @@ class LuxSocket
   def socket
     @socket ||= Socket.tcp(@host, @port, connect_timeout: 5).tap do |s|
       s.setsockopt(Socket::SOL_SOCKET, Socket::SO_KEEPALIVE, true)
+      s.setsockopt(Socket::SOL_TCP, Socket::TCP_KEEPIDLE, 50)
+      s.setsockopt(Socket::SOL_TCP, Socket::TCP_KEEPINTVL, 10)
+      s.setsockopt(Socket::SOL_TCP, Socket::TCP_KEEPCNT, 5)
     end
   end
 
