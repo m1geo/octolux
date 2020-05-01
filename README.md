@@ -4,8 +4,6 @@ This is a Ruby script to parse [Octopus ToU tariff](https://octopus.energy/agile
 
 The particular use-case of this is to charge your home batteries when prices are cheap, and use that power at peak times.
 
-There's also support for toggling Raspberry Pi GPIO pins as an added bonus.
-
 ## Installation
 
 You'll need Ruby - at least 2.3 should be fine, which can be found in all good Linux distributions.
@@ -29,12 +27,6 @@ Now install the gems. You may occasionally need to re-run this as I update the r
 bundle update
 ```
 
-If you are running on a Raspberry Pi and want to use the GPIO support, you can install it with: (you only need to do this once, subsequent `bundle installs` will remember you want the pi package)
-
-```
-bundle install --with pi
-```
-
 Create a `config.ini` using the `doc/config.ini.example` as a template:
 
 ```
@@ -48,7 +40,6 @@ This script needs to know:
 * how many batteries you have, which determines the maximum charge rate (used in agile_cheap_slots rules)
 * which Octopus tariff you're on, AGILE-18-02-21 is my current one for Octopus Agile.
 * if you're using MQTT, where to find your MQTT server.
-* optionally on the Pi, a list of GPIOs you'll be controlling.
 
 Copy `rules.rb` from the example as a starting point:
 
@@ -134,9 +125,3 @@ In your `rules.rb`, you have access to a few objects to do some heavy lifting.
 Forced discharge may be useful if you're paid for export and you have a surplus of stored power when the export rate is high.
 
 Setting the power rates is probably a bit of a niche requirement. Note that discharge rate is *all* discharging, not just forced discharge. This can be used to cap the power being produced by the inverter. Setting it to 0 will disable discharging, even if not charging.
-
-*`gpio`* is a GPIO controller (only available on the Raspberry Pi). These two methods take a string which corresponds to your configuration. See the example config under the `[gpios]` section.
-
-  * `gpio.on('zappi')` - turn on the GPIO pin identified as *zappi* in your config.
-  * `gpio.off('zappi')` - turn off the GPIO pin identified as *zappi* in your config.
-  * `gpio.set('zappi', true)` - alternative way of turning on a GPIO. Pass `false` to turn it off.

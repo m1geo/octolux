@@ -23,9 +23,6 @@ lc = LuxController.new(host: CONFIG['lxp']['host'],
 ls = LuxStatus.new(host: CONFIG['server']['connect_host'] || CONFIG['server']['host'],
                    port: CONFIG['server']['port'])
 
-# abstraction of RPi::GPIO
-gpio = GPIO.new(gpios: CONFIG['gpios'])
-
 # rubocop:enable Lint/UselessAssignment
 
 raise('rules.rb not found!') unless File.readable?('rules.rb')

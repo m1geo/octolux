@@ -27,13 +27,6 @@ port = 4346
 # you can leave this commented out if you don't want to use MQTT at all.
 # uri = mqtt://nas:1883
 
-# an optional list of GPIOs you'd like to control on a Raspberry Pi.
-# the names are used in your rules.rb and can be anything you like.
-# the numbers are corresponding GPIO numbers.
-# See https://www.raspberrypi-spy.co.uk/wp-content/uploads/2012/06/Raspberry-Pi-GPIO-Header-with-Photo.png
-[gpios]
-zappi = 5
-
 [rules]
 # use the cheapest energy to get the batteries to this SOC each night
 required_soc = 90
