@@ -66,14 +66,7 @@ It starts a HTTP server which `octolux.rb` can then query to get realtime invert
 
 It's split like this because there's no way to ask the inverter for the current battery SOC. You just have to wait (up to two minutes) for it to tell you. The server will return the latest SOC on-demand via HTTP.
 
-The simplest thing to do is just start it in screen:
-
-```
-screen
-./server.rb
-```
-
-Alternatively, you can use the provided systemd unit file. The instructions below will start it immediately, and then automatically on reboot. You'll need to be root to do these steps:
+You can use the provided systemd unit file to run the server. The instructions below will start it immediately, and then automatically on reboot. You may need to edit `octolux_server.service` before copying it into place, unless your installation is in `/home/pi/octolux`. You'll need to be root to do these steps:
 
 ```
 cp systemd/octolux_server.service /etc/systemd/system
