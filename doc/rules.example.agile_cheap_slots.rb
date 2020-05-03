@@ -35,10 +35,10 @@ if (evening || stale) && have_prices
 
   LOGGER.info "charge_size = #{charge_size.round(2)} kWh, hours = #{hours_required.round(2)}"
 
-  # the cheapest slots are used to charge up to required_soc. these are restricted to 10pm-8am
+  # the cheapest slots are used to charge up to required_soc. these are restricted to 8pm-8am
   # so we don't end up trying to charge during the day in normal circumstances.
   night_slots = slots.select do |time, _price|
-    (now.hour > 8 && now.day == time.day && time.hour >= 22) || time.hour <= 8
+    (now.hour > 8 && now.day == time.day && time.hour >= 20) || time.hour <= 8
   end
   charge_slots = night_slots.shift(slots_required).to_h
 
@@ -84,13 +84,14 @@ idle.sort.each { |time, price| LOGGER.info "Idle: #{time} @ #{price}p" }
 ac_charge = charge_slots.any? { |time, _price| time == now }
 discharge = discharge_slots.any? { |time, _price| time == now }
 
-LOGGER.info "ac_charge = #{ac_charge} ; discharge = #{discharge} (> #{min_discharge_price}p)"
-
-# if a peak period is approaching and we're under 50%, start emergency charge
-if soc < 50 && octopus.prices.values.take(4).max > 15 && octopus.price < 15
+emergency_soc = CONFIG['rules']['emergency_soc'] || 50
+# if a peak period is approaching and SOC is low, start emergency charge
+if soc < emergency_soc.to_i && octopus.prices.values.take(4).max > 15 && octopus.price < 15
   LOGGER.warn 'Peak approaching, emergency charging'
   ac_charge = true
 end
+
+LOGGER.info "ac_charge = #{ac_charge} ; discharge = #{discharge} (> #{min_discharge_price}p)"
 
 discharge_pct = discharge ? 100 : 0
 r = (lc.discharge_pct = discharge_pct)

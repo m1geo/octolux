@@ -30,6 +30,9 @@ port = 4346
 [rules]
 # use the cheapest energy to get the batteries to this SOC each night
 required_soc = 90
+# enable emergency charge if approaching peak period with less SOC than this.
+# this is a final backup to avoid running out of charge during peak
+emergency_soc = 50
 # always charge when electricity is cheaper than this unit price,
 # even if the SOC is already higher than required_soc
 cheap_charge = 2
