@@ -12,7 +12,7 @@ You can use mqtts for secure connections and add username/password; see the URL 
 
 ## Getting Inverter Status
 
-As mentioned in the README, the inverter sends power data when it feels like it. This is every 2 minutes. There's no way to change this or ask for it on demand.
+As mentioned in the README, the inverter sends power data (also called inputs) when it feels like it. This is every 2 minutes.
 
 It's sent by the inverter as 3 packets in sequence, around a second apart. When we receive each one, it is published under the keys `octolux/inputs/1`, `octolux/inputs/2`, and `octolux/inputs/3`. Each one always has the same set of data, and it should look something like this:
 
@@ -32,6 +32,16 @@ Documenting all these is beyond the scope of this document, but broadly speaking
   * `f_` are mains Hz
   * `t_` are temperatures in celsius; internally, and both radiators on the back of the inverter
   * not really worked out what all the `bat_status_` are yet as they're usually mostly 0
+
+
+You can also request this information to be sent immediately with `octolux/cmd/read_input`, with a payload of 1, 2 or 3, depending on which set of inputs you want:
+
+```
+$ mosquitto_pub -t octolux/cmd/read_input -m 1
+```
+
+This will prompt a further MQ message of `octolux/inputs/1` (as above), and additionally `octolux/result/read_input` will be sent with `OK` when it's complete.
+
 
 ## Controlling the Inverter
 
@@ -83,3 +93,11 @@ This says the inverter has told us that register 65 now contains the value 50. I
 So, clearly for now this requires your client code to know that register 65 is what will change in response to `discharge_pct`. For this reason, the `result` topics are probably more useful for now.
 
 However, you could use these topics to record or graph every time a register changes, regardless of *how* it was changed, since these will be published even if MQ wasn't used to action the change (eg, via LuxPower's portal or app).
+
+Finally, if you know the register you want and want it on-demand, you can send `octolux/cmd/read_hold` with an integer message:
+
+```
+$ mosquitto_pub -t octolux/cmd/read_hold -m 65
+```
+
+This will result in `octolux/hold/65` being sent (as above) and additionally `octolux/result/read_hold` will be sent (with `OK`) once complete.

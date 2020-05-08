@@ -6,7 +6,7 @@ ruby '>= 2.3.0'
 gem 'zeitwerk'
 
 gem 'inifile'
-gem 'lxp-packet', '~> 0.6.0'
+gem 'lxp-packet', '~> 0.7.0'
 
 gem 'roda'
 

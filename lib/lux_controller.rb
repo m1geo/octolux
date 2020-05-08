@@ -18,6 +18,24 @@ class LuxController
     @socket = nil
   end
 
+  def read_input(num)
+    LOGGER.debug "read_input(#{num})"
+
+    type = case num
+           when 1 then LXP::Packet::ReadInput1
+           when 2 then LXP::Packet::ReadInput2
+           when 3 then LXP::Packet::ReadInput3
+           end
+
+    pkt = packet(type: type)
+    socket.write(pkt)
+    read_reply(pkt)
+  end
+
+  def read_hold(register)
+    read_register(register)
+  end
+
   def charge(enable)
     LOGGER.debug "charge(#{enable})"
     update_register(21, LXP::Packet::RegisterBits::AC_CHARGE_ENABLE, enable)
@@ -77,10 +95,7 @@ class LuxController
     LOGGER.debug "read_register(#{register})"
     pkt = packet(type: LXP::Packet::ReadHold, register: register)
     socket.write(pkt)
-    unless (r = socket.read_reply(pkt))
-      LOGGER.fatal 'invalid/no reply from inverter'
-      raise SocketError
-    end
+    r = read_reply(pkt)
 
     LOGGER.debug "read_register(#{register}) => #{r.value}"
 
@@ -94,10 +109,7 @@ class LuxController
     pkt.value = val
 
     socket.write(pkt)
-    unless (r = socket.read_reply(pkt))
-      LOGGER.fatal 'invalid/no reply from inverter'
-      raise SocketError
-    end
+    r = read_reply(pkt)
 
     LOGGER.debug "set_register(#{register}) => #{r.value}"
 
@@ -108,11 +120,20 @@ class LuxController
     @socket ||= LuxSocket.new(host: @host, port: @port)
   end
 
-  def packet(type:, register:)
+  def packet(type:, register: nil)
     type.new.tap do |pkt|
-      pkt.register = register
+      pkt.register = register if register
       pkt.datalog_serial = @datalog
       pkt.inverter_serial = @serial
     end
+  end
+
+  def read_reply(pkt)
+    unless (r = socket.read_reply(pkt))
+      LOGGER.fatal 'invalid/no reply from inverter'
+      raise SocketError
+    end
+
+    r
   end
 end
