@@ -28,15 +28,6 @@ class LuxListener
       @registers ||= {}
     end
 
-    def pv_power
-      inputs[:p_pv]
-    end
-
-    # Return charge power, or if discharging, discharge power (which will be negative)
-    def charge_power
-      inputs[:p_charge] || (-inputs[:p_discharge] if inputs[:p_discharge])
-    end
-
     private
 
     def listen(socket)
