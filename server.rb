@@ -23,10 +23,10 @@ Thread.new do
       rescue StandardError => e
         LOGGER.error "LuxListener Thread: #{e}"
         LOGGER.debug e.backtrace.join("\n")
-        LOGGER.info 'Restarting LuxListener Thread in 5 seconds'
       end
     end
     t.join
+    LOGGER.info 'Restarting LuxListener Thread in 5 seconds'
     sleep 5
   end
 end
