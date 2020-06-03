@@ -12,7 +12,24 @@ require 'rack'
 Thread.new { MQ.run } if CONFIG['mqtt']['uri']
 
 # start a background thread which will listen for inverter packets
-Thread.new { LuxListener.run }
+# in itself, this is wrapped in another thread to try and address
+# reports of MQ stopping being updated. Unable to reproduce atm so
+# this is a bodge.
+Thread.new do
+  loop do
+    t = Thread.new do
+      begin
+        LuxListener.run
+      rescue StandardError => e
+        LOGGER.error "LuxListener Thread: #{e}"
+        LOGGER.debug e.backtrace.join("\n")
+        LOGGER.info 'Restarting LuxListener Thread in 5 seconds'
+      end
+    end
+    t.join
+    sleep 5
+  end
+end
 
 Rack::Server.start(Host: CONFIG['server']['listen_host'] || CONFIG['server']['host'],
                    Port: CONFIG['server']['port'],
