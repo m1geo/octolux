@@ -45,3 +45,5 @@ emergency_soc = 35
 cheap_charge = 2
 # never discharge when electricity is cheaper than this unit price
 min_discharge = 10
+# never charge when electricity is more expensive than this unit price
+max_charge = 9

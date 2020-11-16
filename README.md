@@ -4,7 +4,8 @@ This is a Ruby script to parse [Octopus ToU tariff](https://octopus.energy/agile
 
 The particular use-case of this is to charge your home batteries when prices are cheap, and use that power at peak times.
 
-This introduces Solcast forecasting, by calulating predidcted excess solar and the lowest Agile price.
+This introduces Solcast forecasting, by calulating predicted excess solar and the lowest Agile price.
+If there is enough excess solar to fully charge the battery, then the minimum charge price will be set to the SEG Export price of 5.5p/kWh.
 
 ## Installation
 
