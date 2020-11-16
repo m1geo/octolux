@@ -1,16 +1,18 @@
 # frozen_string_literal: true
 
-# Solcast data collection based on https://github.com/abwbuchanan/octolux/
 now = Time.at(1800 * (Time.now.to_i / 1800))
 LOGGER.info "Current working time = #{now}"
-if (now.hour < 06)
-        todayortom = Date.today
+
+# Solcast data collection based on https://github.com/abwbuchanan/octolux/
+# Determine if we want today or tomorrows forecast
+if (now.hour < 20)
+        forecastdate = Date.today
 else
-        todayortom = Date.today+1
+        forecastdate = Date.today+1
 end
-LOGGER.info "Solar Date = #{todayortom}"
-soltom = solcast.day(todayortom).values.sum / 2
-LOGGER.info "Solar kWh tomorrow = #{soltom.round(2)} kWh"
+LOGGER.info "Solar Date = #{forecastdate}"
+solgen = solcast.day(forecastdate).values.sum / 2
+LOGGER.info "Solar kWh tomorrow = #{solgen.round(2)} kWh"
 
 # Agile pricing
 LOGGER.info "Current Price = #{octopus.price}p"
@@ -65,8 +67,15 @@ else
   charge_slots = charge_slots.map { |time, price| [Time.parse(time), price] }.to_h
 end
 
-# load in max defined charge price from config. Else set to 5.5p
-max_charge_price = CONFIG['rules']['max_charge'] || 5.5
+# Set max charge price depending on Solar availability. 
+# If there is lots of solar, make sure the charge price is below Export price.
+if (solgen > charge_size)
+  max_charge_price = 5.5
+  LOGGER.info "Excess Solar, Charge price must be lower than SEG"
+else
+  max_charge_price = CONFIG['rules']['max_charge'].to_i
+  LOGGER.info "Low solar generation. Max Charge set to #{max_charge_price}p"
+end
 
 
 # merge in any slots with a price cheaper than cheap_charge from config
