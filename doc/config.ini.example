@@ -1,18 +1,18 @@
 [lxp]
-host = 192.168.0.200
+host = 192.168.1.2
 port = 8000
-serial = 9393013580
-datalog = EF76460231
-batteries = 4
+serial = 1234567890
+datalog = AB12345678
+batteries = 2
 
 # these can be obtained from your Octopus account;
 # see the URL under Unit Rates at https://octopus.energy/dashboard/developer/
 #
 # note that the tariff_code has a different final letter depending
-# on your region, so unless you're in West Midlands you may need to change this.
+# on your region, so unless you're in South East England you may need to change this.
 [octopus]
 product_code = AGILE-18-02-21
-tariff_code = E-1R-AGILE-18-02-21-E
+tariff_code = E-1R-AGILE-18-02-21-H
 
 # These are found from your Solcast Account
 [solcast]
