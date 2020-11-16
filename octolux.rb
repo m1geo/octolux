@@ -28,3 +28,7 @@ ls = LuxStatus.new(host: CONFIG['server']['connect_host'] || CONFIG['server']['h
 raise('rules.rb not found!') unless File.readable?('rules.rb')
 
 instance_eval(File.read('rules.rb'), 'rules.rb')
+
+solcast = Solcast.new(api_key: CONFIG['solcast']['api_key'],
+                      resource_id: CONFIG['solcast']['resource_id'])
+solcast.update if solcast.stale?

@@ -14,6 +14,13 @@ batteries = 4
 product_code = AGILE-18-02-21
 tariff_code = E-1R-AGILE-18-02-21-E
 
+# These are found from your Solcast Account
+[solcast]
+api_key = abcdefghijklmnopqrstuvwxyz123456
+resource_id = abcd-1234-efgh
+# Enter your house baseload here (in watts) to calculate excess solar.
+base_load = 300
+
 [server]
 # used by server.rb to open a listening port.
 # use 0.0.0.0 here to make the server available externally
@@ -32,9 +39,9 @@ port = 4346
 required_soc = 90
 # enable emergency charge if approaching peak period with less SOC than this.
 # this is a final backup to avoid running out of charge during peak
-emergency_soc = 50
+emergency_soc = 35
 # always charge when electricity is cheaper than this unit price,
 # even if the SOC is already higher than required_soc
 cheap_charge = 2
 # never discharge when electricity is cheaper than this unit price
-min_discharge = 3
+min_discharge = 10
