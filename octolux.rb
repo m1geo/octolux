@@ -3,6 +3,10 @@
 
 require_relative 'boot'
 
+solcast = Solcast.new(api_key: CONFIG['solcast']['api_key'],
+                      resource_id: CONFIG['solcast']['resource_id'])
+solcast.update if solcast.stale?
+
 octopus = Octopus.new(product_code: CONFIG['octopus']['product_code'],
                       tariff_code: CONFIG['octopus']['tariff_code'])
 # if we have less than 6 hours of future $octopus tariff data, update it
@@ -28,7 +32,3 @@ ls = LuxStatus.new(host: CONFIG['server']['connect_host'] || CONFIG['server']['h
 raise('rules.rb not found!') unless File.readable?('rules.rb')
 
 instance_eval(File.read('rules.rb'), 'rules.rb')
-
-solcast = Solcast.new(api_key: CONFIG['solcast']['api_key'],
-                      resource_id: CONFIG['solcast']['resource_id'])
-solcast.update if solcast.stale?
