@@ -4,6 +4,8 @@ This is a Ruby script to parse [Octopus ToU tariff](https://octopus.energy/agile
 
 The particular use-case of this is to charge your home batteries when prices are cheap, and use that power at peak times.
 
+This introduces Solcast forecasting, by calulating predidcted excess solar and the lowest Agile price.
+
 ## Installation
 
 You'll need Ruby - at least 2.3 should be fine, which can be found in all good Linux distributions.
@@ -40,6 +42,8 @@ This script needs to know:
 * how many batteries you have, which determines the maximum charge rate (used in agile_cheap_slots rules)
 * which Octopus tariff you're on, AGILE-18-02-21 is my current one for Octopus Agile.
 * if you're using MQTT, where to find your MQTT server.
+* your Solcast API key and Resource ID.
+* your base load, to calculate excess solar.
 
 Copy `rules.rb` from the example as a starting point:
 
