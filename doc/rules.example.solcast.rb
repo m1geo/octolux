@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 now = Time.at(1800 * (Time.now.to_i / 1800))
-LOGGER.info "Current working time = #{now}"
+#LOGGER.info "Current working time = #{now}"
 
 # Solcast data collection based on https://github.com/abwbuchanan/octolux/
 # Determine if we want today or tomorrows forecast
@@ -10,15 +10,26 @@ if (now.hour < 20)
 else
         forecastdate = Date.today+1
 end
-LOGGER.info "Solar Date = #{forecastdate}"
 solgen = solcast.day(forecastdate).values.sum / 2
-LOGGER.info "Solar kWh tomorrow = #{solgen.round(2)} kWh"
+
+# Load baseload and convert from W to kWh/30mins
+base = (CONFIG['solcast']['base_load'])
+basehh = base.to_f / 2000
+
+# Calculate excess solar by subtracting baseload.
+solexc_h = solcast.day(forecastdate).transform_values { |v| [v - basehh, 0].max }
+solexc = solexc_h.values.sum / 2
+
+# Print everything to log for auditing:
+LOGGER.info "Entered base load = #{base}w"
+LOGGER.info "Solar date = #{forecastdate}"
+LOGGER.info "Solar kWh available = #{solgen.round(2)} kWh"
+LOGGER.info "Excess solar kWh available = #{solexc.round(2)} kWh"
 
 # Agile pricing
 LOGGER.info "Current Price = #{octopus.price}p"
 
-required_soc = CONFIG['rules']['required_soc'].to_i
-
+required_soc = CONFIG['rules']['required_soc']
 if (soc = ls.inputs['soc'])
   LOGGER.info "SOC = #{soc}% / #{required_soc}%"
 else
@@ -27,20 +38,17 @@ else
 end
 
 slots = octopus.prices.sort_by { |_k, v| v }
-
-#now = Time.at(1800 * (Time.now.to_i / 1800))
-
 f = Pathname.new('cheap_slot_data.json')
 data = f.readable? ? JSON.parse(f.read) : {}
 
 # charge_slots are worked out each evening after 6pm, when we have new Octopus price data.
-evening = now.hour >= 18
+evening = now.hour >= 16
 stale = data['updated_at'].nil? || Time.now - Time.parse(data['updated_at']) > (23 * 60 * 60)
 have_prices = octopus.prices.count > 20
+
 if (evening || stale) && have_prices
   battery_count = CONFIG['lxp']['batteries'].to_i
   charge_rate = [3, battery_count].min
-
   system_size = 2.4 * battery_count # kWh per battery
   # TODO: bias this based on solcast?
   charge_size = system_size * ((required_soc - soc) / 100.0)
@@ -67,16 +75,21 @@ else
   charge_slots = charge_slots.map { |time, price| [Time.parse(time), price] }.to_h
 end
 
+ LOGGER.debug "Systemsize. #{system_size}"
+ LOGGER.debug "RequiredSOC. #{}"
+ LOGGER.debug "SOC. #{}"
+ LOGGER.debug "Charge size. #{charge_size}"
+
 # Set max charge price depending on Solar availability. 
 # If there is lots of solar, make sure the charge price is below Export price.
-if (solgen > charge_size)
+# TODO: Introduce various levels of charge from Solar rather than all-or-nothing
+if (solexc > charge_size.to_f)
   max_charge_price = 5.5
   LOGGER.info "Excess Solar, Charge price must be lower than SEG"
 else
   max_charge_price = CONFIG['rules']['max_charge'].to_i
   LOGGER.info "Low solar generation. Max Charge set to #{max_charge_price}p"
 end
-
 
 # merge in any slots with a price cheaper than cheap_charge from config
 cheap_charge = CONFIG['rules']['cheap_charge'].to_f
@@ -86,10 +99,8 @@ charge_slots.merge!(cheap_slots)
 charge_slots = charge_slots.delete_if { |_k, v| v >= max_charge_price }.to_h
 # Sort
 charge_slots.sort.each { |time, price| LOGGER.info "Charge: #{time} @ #{price}p" }
-# Sort
-charge_slots.sort.each { |time, price| LOGGER.info "Charge: #{time} @ #{price}p" }
 
-
+# Not used:
 # discharge_slots depends how much SOC we have. The more SOC, the more generous we can be
 # with discharging. The lower the SOC, the more we want to save that charge for higher prices.
 multiplier = if soc < 30 then 1.4
@@ -110,7 +121,7 @@ discharge_slots = slots.delete_if { |_k, v| v <= min_discharge_price }.to_h
 # this is just used for informational logging. Need to convert back to Time if loaded from JSON.
 t = (charge_slots.keys + discharge_slots.keys).map { |n| n.is_a?(Time) ? n : Time.parse(n) }
 idle = octopus.prices.reject { |k, _v| t.include?(k) }
-idle.sort.each { |time, price| LOGGER.info "Idle: #{time} @ #{price}p" }
+idle.sort.each { |time, price| } #LOGGER.info "Idle: #{time} @ #{price}p" }
 
 # enable ac_charge/discharge if any of the keys match the current half-hour period
 ac_charge = charge_slots.any? { |time, _price| time == now }
