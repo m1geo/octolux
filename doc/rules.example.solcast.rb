@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 # TODO: 
-# Bias charge size based on Solcast
+# Bias charge size based on Solcast - present but untested and disabled.
 # Add summer/winter toggle as Solcast seems unreliable in winter. Only use it in summer.
+# Re-add in Agile-biased discharge - useful for larger batteries.
 
 now = Time.at(1800 * (Time.now.to_i / 1800))
 #LOGGER.info "Current working time = #{now}"
@@ -42,7 +43,7 @@ end
 battery_count = CONFIG['lxp']['batteries'].to_i
 charge_rate = [3, battery_count].min # No rate increase after 3 batteries
 system_size = 2.4 * battery_count # kWh per battery
-charge_size = system_size * ((required_soc - soc) / 100.0)
+charge_size = (system_size * ((required_soc - soc) / 100.0)) #- solexc # # #Bias' charge size based on solcast. Still to test.
 charge_size = 0 if charge_size.negative?
 
 # Use Solcast to set max charge price.
@@ -95,37 +96,29 @@ end
 cheap_charge = CONFIG['rules']['cheap_charge'].to_f
 cheap_slots = octopus.prices.select { |_time, price| price < cheap_charge }
 charge_slots.merge!(cheap_slots)
-# delete slots over charge price
-#charge_slots = charge_slots.delete_if { |_k, v| v >= max_charge_price }.to_h
 # Sort
 charge_slots.sort.each { |time, price| LOGGER.info "Charge: #{time} @ #{price}p" }
 
-# Not used, but can bias discharge slots if needed:
-# discharge_slots depends how much SOC we have. The more SOC, the more generous we can be
-# with discharging. The lower the SOC, the more we want to save that charge for higher prices.
-multiplier = if soc < 30 then 1.4
-             elsif soc < 40 then 1.32
-             elsif soc < 50 then 1.24
-             elsif soc < 60 then 1.16
-             elsif soc < 80 then 1.08
-             else
-               1.0
-             end
-# load in min defined discharge price from config
-min_discharge_price = CONFIG['rules']['min_discharge'] # * multiplier
-#min_discharge_price = [min_discharge_price, CONFIG['rules']['min_discharge'].to_f].max.round(4)
-discharge_slots = slots.delete_if { |_k, v| v <= min_discharge_price }.to_h
-# discharge_slots = slots.delete_if { |_k, v| v <= max_charge_price }.to_h
-# discharge_slots.sort.each { |time, price| LOGGER.info "Discharge: #{time} @ #{price}p" }
-
 # this is just used for informational logging. Need to convert back to Time if loaded from JSON.
-t = (charge_slots.keys + discharge_slots.keys).map { |n| n.is_a?(Time) ? n : Time.parse(n) }
-idle = octopus.prices.reject { |k, _v| t.include?(k) }
-idle.sort.each { |time, price| LOGGER.info "Idle: #{time} @ #{price}p" }
+#t = (charge_slots.keys + discharge_slots.keys).map { |n| n.is_a?(Time) ? n : Time.parse(n) }
+#idle = octopus.prices.reject { |k, _v| t.include?(k) }
+#idle.sort.each { |time, price| LOGGER.info "Idle: #{time} @ #{price}p" }
 
-# enable ac_charge/discharge if any of the keys match the current half-hour period
+# Simplified discharge routine
+# Allow for higher discharge price prior to 3pm to conserve charge for peak period
+# A lower discharge price after peak will let rest of battery discharge
+if ( now.hour < 15 )
+  min_discharge_price = CONFIG['rules']['pre_discharge']
+  LOGGER.info "Prepeak, min discharge price set to #{min_discharge_price}p"
+else
+  min_discharge_price = CONFIG['rules']['post_discharge']
+  LOGGER.info "Postpeak, min discharge price set to #{min_discharge_price}p"
+end
+
+# enable ac_charge if any of the keys match the current half-hour period
 ac_charge = charge_slots.any? { |time, _price| time == now }
-discharge = discharge_slots.any? { |time, _price| time == now }
+# enable discharge if current HH price is above specificed price
+discharge = ( octopus.price >= min_discharge_price )
 
 emergency_soc = CONFIG['rules']['emergency_soc'] || 50
 # if a peak period is approaching and SOC is low, start emergency charge
