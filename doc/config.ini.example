@@ -43,7 +43,9 @@ emergency_soc = 35
 # always charge when electricity is cheaper than this unit price,
 # even if the SOC is already higher than required_soc
 cheap_charge = 2
-# never discharge when electricity is cheaper than this unit price
-min_discharge = 10
 # never charge when electricity is more expensive than this unit price
 max_charge = 9
+# Prior to peak period, never discharge is price is cheaper than this unit price
+pre_discharge = 12
+# After the peak period, never discharge if price is cheaper than this unit price
+post_discharge = 10
