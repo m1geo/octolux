@@ -20,6 +20,9 @@ api_key = abcdefghijklmnopqrstuvwxyz123456
 resource_id = abcd-1234-efgh
 # Enter your house baseload here (in watts) to calculate excess solar.
 base_load = 300
+# Enter the maximum age (in minutes) Solcast should be before refreshing
+# Every slot < 30. Cronjob limits to every 30. [50 queries per day in free tier]
+max_forecast_age = 25
 
 [server]
 # used by server.rb to open a listening port.

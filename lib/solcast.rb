@@ -27,10 +27,11 @@ class Solcast
 
   # We only get 10 API requests per day on the free Solcast tier,
   # so be careful about when we update it.
-  def stale?
-    forecasts.empty? || (Time.now - data_file.mtime) > 14_400
+  def stale(age_minutes)
+    #LOGGER.info "Solcast data age: #{((Time.now - data_file.mtime)/60.0).round(1)} minutes"
+    forecasts.empty? || (Time.now - data_file.mtime) > (age_minutes * 60.0)
   end
-
+  
   def update
     response = http.request(request)
 
