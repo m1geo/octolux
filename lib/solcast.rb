@@ -29,7 +29,7 @@ class Solcast
   # so be careful about when we update it.
   def stale(age_minutes)
     #LOGGER.info "Solcast data age: #{((Time.now - data_file.mtime)/60.0).round(1)} minutes"
-    forecasts.empty? || (Time.now - data_file.mtime) > (age_minutes * 60.0)
+    forecasts.empty? || (Time.now - data_file.mtime) > ((age_minutes * 60.0).to_f)
   end
   
   def update

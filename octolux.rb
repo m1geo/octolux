@@ -8,10 +8,10 @@ solcast = Solcast.new(api_key: CONFIG['solcast']['api_key'],
                       resource_id: CONFIG['solcast']['resource_id'])
 
 solcast_slate = solcast.stale(CONFIG['solcast']['max_forecast_age'])
-solcast_valid_updating_window = Time.now.hour < 22 # true if update allowed - time in UTC
+solcast_valid_updating_window = Time.now.hour < 22 # true if update allowed - time as per machine time
 solcast_updated = (solcast_slate and solcast_valid_updating_window)
-LOGGER.debug "Solcast valid window = #{solcast_valid_updating_window}"
-LOGGER.debug "Solcast stale data   = #{solcast_slate}"
+#LOGGER.debug "Solcast valid window = #{solcast_valid_updating_window}"
+#LOGGER.debug "Solcast stale data   = #{solcast_slate}"
 solcast.update if solcast_updated
 LOGGER.info "Solcast data updated = #{solcast_updated}"
 
