@@ -7,9 +7,10 @@ require 'json'
 require 'time'
 
 class Octopus
-  def initialize(product_code:, tariff_code:)
+  def initialize(product_code:, tariff_code:, tariff_type:)
     @product_code = product_code
     @tariff_code = tariff_code
+    @tariff_type = tariff_type
   end
 
   # True if we have no data, or we're running out of tariff data;
@@ -66,7 +67,7 @@ class Octopus
   end
 
   def tariff_data_file
-    Pathname.new('tariff_data.json')
+    Pathname.new(@tariff_type + "_tariff_data.json")
   end
 
   def url

@@ -15,11 +15,24 @@ solcast_updated = (solcast_slate and solcast_valid_updating_window)
 solcast.update if solcast_updated
 LOGGER.info "Solcast data updated = #{solcast_updated}"
 
-octopus = Octopus.new(product_code: CONFIG['octopus']['product_code'],
-                      tariff_code: CONFIG['octopus']['tariff_code'])
+## IMPORT OCTOPUS
+octopus_imp = Octopus.new(product_code: CONFIG['octopus']['import_product_code'],
+                      tariff_code: CONFIG['octopus']['import_tariff_code'],
+                      tariff_type: "import")
 # if we have less than 6 hours of future $octopus tariff data, update it
-octopus.update if octopus.stale?
-unless octopus.price
+octopus_imp.update if octopus_imp.stale?
+unless octopus_imp.price
+  LOGGER.fatal 'No current Octopus price, aborting'
+  exit 255
+end
+
+## EXPORT OCTOPUS
+octopus_exp = Octopus.new(product_code: CONFIG['octopus']['export_product_code'],
+                      tariff_code: CONFIG['octopus']['export_tariff_code'],
+                      tariff_type: "export")
+# if we have less than 6 hours of future $octopus tariff data, update it
+octopus_exp.update if octopus_exp.stale?
+unless octopus_exp.price
   LOGGER.fatal 'No current Octopus price, aborting'
   exit 255
 end
