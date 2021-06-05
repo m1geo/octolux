@@ -20,7 +20,7 @@ sudo apt-get install ruby ruby-dev ruby-bundler git build-essential
 Clone this repository to your machine:
 
 ```
-git clone https://github.com/biohead/octolux.git
+git clone https://github.com/m1geo/octolux.git
 cd octolux
 ```
 
@@ -30,11 +30,7 @@ Now install the gems. You may occasionally need to re-run this as I update the r
 bundle update
 ```
 
-Create a `config.ini` using the `doc/config.ini.example` as a template:
-
-```
-cp doc/config.ini.example config.ini
-```
+Configure the config.ini
 
 This script needs to know:
 
