@@ -9,7 +9,7 @@ class LuxController
     @host = host
     @port = port
     # these can be numeric, but we want them as strings to put into data packets
-    @serial = serial.to_s
+    @serial = serial[1..-2]
     @datalog = datalog.to_s
   end
 
