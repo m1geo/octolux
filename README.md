@@ -20,7 +20,7 @@ sudo apt-get install ruby ruby-dev ruby-bundler git build-essential
 Clone this repository to your machine:
 
 ```
-git clone https://github.com/biohead/octolux.git
+git clone https://github.com/m1geo/octolux.git
 cd octolux
 ```
 
